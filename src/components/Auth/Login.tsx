@@ -31,7 +31,7 @@ const Login: React.FC = () => {
     setError("");
     try {
       // Attempt login with Firebase
-      const userCredential = await login(email, password);
+      const userCredential = await login(email ?? "", password ?? "");
       // Store user in Redux
       dispatch(setUser({ uid: userCredential.user.uid, email: userCredential.user.email }));
       setError("");
