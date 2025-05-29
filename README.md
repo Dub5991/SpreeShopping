@@ -1,29 +1,31 @@
 # 🛍️ Spree Shopping
 
-Welcome to **Spree** – a playful, modern e-commerce experience built with React, TypeScript, Vite, and a dash of animation magic!  
-Enjoy a gamified, visually engaging shopping spree with a vibrant UI and smooth interactions.
-
----
-
 <div align="center">
-
-  <br/>
+  <img src="/SpreeLogo.svg" alt="Spree Logo" width="90" />
+  <br/><br/>
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=28&duration=2500&pause=800&color=6366F1&center=true&vCenter=true&width=500&lines=Shop+Smarter.+Shop+Spree!;Gamified+Rewards+%F0%9F%8E%81;Modern+UI+%F0%9F%92%BB;Lightning+Fast+%F0%9F%94%A5" alt="Typing SVG" />
+  <br/><br/>
+  <b>Modern, animated, and gamified e-commerce built with React, TypeScript, Vite, and Firebase.</b>
+  <br/><br/>
+  <img src="https://user-images.githubusercontent.com/placeholder/spree-hero.png" alt="Spree Hero" width="80%" />
+  <br/>
+  <img src="https://user-images.githubusercontent.com/placeholder/spree-cart.png" alt="Spree Cart" width="80%" />
 </div>
 
 ---
 
 ## ✨ Features
 
-- **Animated backgrounds** and playful UI
-- **Gamified shopping** with rewards and XP
-- **Modern, accessible forms** (login, register, password reset)
-- **Responsive design** for all devices
-- **Framer Motion** for smooth transitions
-- **React-Bootstrap** for rapid, beautiful layouts
-- **Redux** for state management
-- **Firebase** authentication & data
-- **Custom SVG logo** and branding
+- 🎨 **Animated backgrounds** and playful, modern UI
+- 🏆 **Gamified shopping** with XP, levels, and rewards
+- 🔒 **Secure authentication** (login, register, password reset)
+- 📱 **Responsive design** for all devices
+- ⚡ **Lightning-fast** with Vite and React 19
+- 🛒 **Product catalog, cart, and orders**
+- 🧩 **Redux Toolkit** for robust state management
+- 🔥 **Firebase** for authentication and data
+- 💡 **Framer Motion** for smooth transitions
+- 🖼️ **Custom SVG branding** and logo
 
 ---
 
@@ -54,26 +56,31 @@ http://localhost:5173
 
 ## 🧩 Tech Stack
 
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Vite](https://vitejs.dev/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [React Bootstrap](https://react-bootstrap.github.io/)
-- [Firebase](https://firebase.google.com/)
-- [Redux Toolkit](https://redux-toolkit.js.org/)
+| Technology         | Purpose                        |
+|--------------------|-------------------------------|
+| [React 19](https://react.dev/)           | UI library                     |
+| [TypeScript](https://www.typescriptlang.org/)      | Type safety                    |
+| [Vite](https://vitejs.dev/)              | Fast dev/build tool             |
+| [Redux Toolkit](https://redux-toolkit.js.org/)     | State management               |
+| [Firebase](https://firebase.google.com/)           | Auth & database                |
+| [React Bootstrap](https://react-bootstrap.github.io/)| UI components                |
+| [Framer Motion](https://www.framer.com/motion/)    | Animations & transitions       |
 
 ---
 
-## 🎨 Animated Elements
+## 🎨 Design & Animation
 
 - **Animated Spree Logo**  
   <img src="/SpreeLogo.svg" alt="Spree Logo" width="80" />
 
 - **Background Orbs & Waves**  
-  Subtle, animated SVG and CSS backgrounds for a lively feel.
+  Subtle, animated SVG and CSS backgrounds for a lively, modern feel.
 
 - **Motion Transitions**  
   Page and component transitions powered by Framer Motion.
+
+- **Gamified UI**  
+  Earn XP and level up as you shop!
 
 ---
 
@@ -124,4 +131,3 @@ MIT
   <img src="/SpreeLogo.svg" alt="Spree Logo" width="60" /><br/>
   <b>Happy Spree Shopping!</b>
 </div>
-
