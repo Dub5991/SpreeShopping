@@ -13,7 +13,7 @@ import ProductDetail from "./components/Products/ProductDetail";
 import CartPage from "./pages/Cart";
 import Logout from "./components/Auth/Logout";
 import AnimatedBackground from "./components/AnimatedBackground";
-import SpreeLogo from "./components/SpreeLogo"; // Import the animated Spree logo
+import SpreeLogo from "./components/SpreeLogo";
 
 const App: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
@@ -42,9 +42,8 @@ const App: React.FC = () => {
             onClick={handleNavClick}
             className="d-flex align-items-center gap-2"
           >
-            <SpreeLogo width={40} height={40} className="d-inline-block align-top" /> {/* Animated Spree logo */}
-            
-            {/* Brand text */}
+            {/* Use only the size prop for SpreeLogo */}
+            <SpreeLogo size={40} className="d-inline-block align-top" />
             <span className="fw-bold ms-2" style={{ fontSize: 22, letterSpacing: 1 }}>
               Spree Store
             </span>
