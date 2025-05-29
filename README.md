@@ -6,7 +6,7 @@ Enjoy a gamified, visually engaging shopping spree with a vibrant UI and smooth 
 ---
 
 <div align="center">
-  <img src="/SpreeLogo.svg" alt="Spree Logo" width="120" style="margin-bottom: 1em;" />
+
   <br/>
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=28&duration=2500&pause=800&color=6366F1&center=true&vCenter=true&width=500&lines=Shop+Smarter.+Shop+Spree!;Gamified+Rewards+%F0%9F%8E%81;Modern+UI+%F0%9F%92%BB;Lightning+Fast+%F0%9F%94%A5" alt="Typing SVG" />
 </div>
