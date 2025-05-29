@@ -1,6 +1,3 @@
-// src/components/Auth/Register.tsx
-// Modern, professional register form with enhanced UI/UX and password reset option
-
 import React, { useState } from "react";
 import { register, sendPasswordReset } from "../../firebase/auth";
 import { createUserDoc } from "../../firebase/firestore";
@@ -9,33 +6,27 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
-// Accent color for UI elements
 const accent = "#6366f1";
 
 const Register: React.FC = () => {
-  // State variables for form fields and UI state
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
-  const [error, setError] = useState("");
-  const [resetMsg, setResetMsg] = useState("");
-  const [showReset, setShowReset] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [resetEmail, setResetEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [resetMsg, setResetMsg] = useState<string>("");
+  const [showReset, setShowReset] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [resetLoading, setResetLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Handle registration form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      // Register user with email and password
       const userCredential = await register(email, password);
-      // Create user document in Firestore
       await createUserDoc(userCredential.user.uid, { email });
       setError("");
-      // Redirect to login page after successful registration
       navigate("/login");
     } catch (err: any) {
       setError(err.message);
@@ -43,15 +34,13 @@ const Register: React.FC = () => {
     setLoading(false);
   };
 
-  // Handle password reset form submission
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetMsg("");
     setError("");
     setResetLoading(true);
     try {
-      // Send password reset email (uses resetEmail if provided, otherwise email)
-      await sendPasswordReset(resetEmail || email);
+      await sendPasswordReset((resetEmail ?? "") || (email ?? ""));
       setResetMsg("Password reset email sent! Check your inbox.");
     } catch (err: any) {
       setError(err.message);
@@ -78,7 +67,6 @@ const Register: React.FC = () => {
         }}
       >
         <Card.Body>
-          {/* Animated heading */}
           <motion.h2
             className="mb-4 fw-bold text-center"
             style={{
@@ -93,7 +81,6 @@ const Register: React.FC = () => {
             Register for Spree
           </motion.h2>
           <AnimatePresence>
-            {/* Show register form or password reset form based on showReset */}
             {!showReset ? (
               <motion.div
                 key="register"
@@ -102,13 +89,12 @@ const Register: React.FC = () => {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Registration Form */}
                 <Form onSubmit={handleSubmit} autoComplete="on">
                   <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      value={email}
+                      value={email ?? ""}
                       onChange={e => setEmail(e.target.value)}
                       required
                       autoFocus
@@ -121,7 +107,7 @@ const Register: React.FC = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      value={password}
+                      value={password ?? ""}
                       onChange={e => setPassword(e.target.value)}
                       required
                       autoComplete="new-password"
@@ -148,7 +134,6 @@ const Register: React.FC = () => {
                     )}
                     Register
                   </Button>
-                  {/* Link to show password reset form */}
                   <div className="text-center mt-3">
                     <Button
                       variant="link"
@@ -170,14 +155,13 @@ const Register: React.FC = () => {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Password Reset Form */}
                 <Form onSubmit={handleReset}>
                   <Form.Group className="mb-3">
                     <Form.Label>Enter your email to reset password</Form.Label>
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={resetEmail || email}
+                        value={(resetEmail ?? "") || (email ?? "")}
                         onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
@@ -205,7 +189,6 @@ const Register: React.FC = () => {
                     )}
                     Send Reset Email
                   </Button>
-                  {/* Link to go back to register form */}
                   <div className="text-center mt-3">
                     <Button
                       variant="link"
@@ -221,13 +204,11 @@ const Register: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          {/* Error alert */}
           {error && (
             <Alert variant="danger" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
               {error}
             </Alert>
           )}
-          {/* Success alert for password reset */}
           {resetMsg && (
             <Alert variant="success" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
               {resetMsg}
