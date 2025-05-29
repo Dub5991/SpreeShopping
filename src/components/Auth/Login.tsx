@@ -114,7 +114,7 @@ const Login: React.FC = () => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      value={email}
+                      value={resetEmail ?? email ?? ""}
                       onChange={e => setEmail(e.target.value)}
                       required
                       placeholder="you@email.com"
