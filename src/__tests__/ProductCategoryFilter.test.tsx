@@ -1,13 +1,12 @@
-// ROUTE: /components/Products/ProductCategoryFilter
-// UNIT TEST: Checks rendering and category selection
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import ProductCategoryFilter from "../components/Products/ProductCategoryFilter";
 
 // Mock getProducts to return categories
 jest.mock("../firebase/firestore", () => ({
   getProducts: () => ({
-    then: cb =>
+    then: (cb: (arg: any) => void) =>
       cb({
         docs: [
           { data: () => ({ category: "Electronics" }) },

@@ -1,14 +1,13 @@
-// ROUTE: /components/Products/ProductList (integration with Cart)
-// INTEGRATION TEST: Checks Cart updates when adding a product
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import { BrowserRouter } from "react-router-dom";
 import ProductList from "../components/Products/ProductList";
 
 // Mock getProducts to return a single product
 jest.mock("../firebase/firestore", () => ({
   getProducts: () => ({
-    then: cb =>
+    then: (cb: (arg: any) => void) =>
       cb({
         docs: [
           {

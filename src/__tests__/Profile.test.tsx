@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import Profile from "../components/User/Profile";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -50,10 +51,8 @@ test("renders Profile with user info", async () => {
     </Provider>
   );
 
-  // Wait for all promises (including useEffect) to resolve
   await flushPromises();
 
-  // Wait for the email to appear
   await waitFor(() =>
     expect(screen.getByText(/test@example.com/i)).toBeInTheDocument()
   );
