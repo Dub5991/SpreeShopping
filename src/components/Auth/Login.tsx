@@ -10,7 +10,6 @@ import clsx from "clsx";
 const accent = "#6366f1";
 
 const Login: React.FC = () => {
-  // Always initialize as an empty string so that the values are never null
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [resetEmail, setResetEmail] = useState<string>("");
@@ -29,17 +28,19 @@ const Login: React.FC = () => {
     setError("");
 
     try {
-      // Defensive: ensure we always have a string
       const safeEmail = email ?? "";
       const safePassword = password ?? "";
       const userCredential = await login(safeEmail, safePassword);
 
-      // Check if user exists and ensure the email is never null by providing a fallback.
       if (userCredential?.user) {
         dispatch(
           setUser({
-            uid: userCredential.user.uid,
-            email: userCredential.user.email ?? ""
+            uid: userCredential.user.uid ?? "",
+            email: userCredential.user.email ?? "",
+            displayName: userCredential.user.displayName ?? "",
+            phone: (userCredential.user as any).phone ?? "",
+            address: (userCredential.user as any).address ?? "",
+            avatarUrl: userCredential.user.photoURL ?? ""
           })
         );
       } else {
@@ -48,7 +49,7 @@ const Login: React.FC = () => {
         return;
       }
 
-      // Redirect after successful login
+      setError("");
       navigate("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -66,7 +67,6 @@ const Login: React.FC = () => {
     setError("");
     setResetLoading(true);
     try {
-      // Ensure that we always pass a valid string by falling back to an empty string
       const safeResetEmail = resetEmail ?? "";
       const safeEmail = email ?? "";
       await sendPasswordReset(safeResetEmail || safeEmail);
@@ -128,7 +128,7 @@ const Login: React.FC = () => {
                     <Form.Control
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={e => setEmail(e.target.value)}
                       required
                       placeholder="you@email.com"
                       style={{ borderRadius: "1em" }}
@@ -140,7 +140,7 @@ const Login: React.FC = () => {
                     <Form.Control
                       type="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={e => setPassword(e.target.value)}
                       required
                       autoComplete="current-password"
                       placeholder="Your password"
@@ -196,7 +196,7 @@ const Login: React.FC = () => {
                       <Form.Control
                         type="email"
                         value={resetEmail || email}
-                        onChange={(e) => setResetEmail(e.target.value)}
+                        onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
                         style={{ borderRadius: "1em" }}
