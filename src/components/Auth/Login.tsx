@@ -10,7 +10,7 @@ import clsx from "clsx";
 const accent = "#6366f1";
 
 const Login: React.FC = () => {
-  // State for login and reset forms
+  // State for login and reset forms, always initialized as string
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [resetEmail, setResetEmail] = useState<string>("");
@@ -30,10 +30,12 @@ const Login: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      // Attempt login with Firebase
-      const userCredential = await login(email as string, password as string);
-      // Store user in Redux
-      if (userCredential && userCredential.user) {
+      // Defensive: always pass a string
+      const safeEmail = email ?? "";
+      const safePassword = password ?? "";
+      const userCredential = await login(safeEmail, safePassword);
+      // Defensive: check userCredential exists
+      if (userCredential?.user) {
         dispatch(setUser({ uid: userCredential.user.uid, email: userCredential.user.email }));
       } else {
         setError("Login failed: user information not found.");
@@ -41,7 +43,6 @@ const Login: React.FC = () => {
         return;
       }
       setError("");
-      // Redirect to profile page
       navigate("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -60,8 +61,10 @@ const Login: React.FC = () => {
     setError("");
     setResetLoading(true);
     try {
-      // Always pass a string to sendPasswordReset
-      await sendPasswordReset((resetEmail ?? "") || (email ?? ""));
+      // Defensive: always pass a string
+      const safeResetEmail = resetEmail ?? "";
+      const safeEmail = email ?? "";
+      await sendPasswordReset(safeResetEmail || safeEmail);
       setResetMsg("Password reset email sent! Check your inbox.");
     } catch (err: unknown) {
       if (err instanceof Error) {
