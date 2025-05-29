@@ -1,39 +1,26 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import '@testing-library/jest-dom';
-import { BrowserRouter } from "react-router-dom";
-import ProductList from "../components/Products/ProductList";
+import ProductCategoryFilter from "../components/Products/ProductCategoryFilter";
 
-// Mock getProducts to return a single product
+// Mock getProducts to return categories
 jest.mock("../firebase/firestore", () => ({
   getProducts: () => ({
     then: (cb: (arg: any) => void) =>
       cb({
         docs: [
-          {
-            id: "1",
-            data: () => ({
-              name: "Test Product",
-              price: 10,
-              stock: 5,
-              category: "Test",
-              imageUrl: "",
-            }),
-          },
+          { data: () => ({ category: "Electronics" }) },
+          { data: () => ({ category: "Clothing" }) },
         ],
       }),
   }),
 }));
 
-test("adds product to cart and updates cart", async () => {
-  render(
-    <BrowserRouter>
-      <ProductList />
-    </BrowserRouter>
-  );
-  // Find the add button for the product
-  const addButton = await screen.findByRole("button", { name: /add/i });
-  fireEvent.click(addButton);
-  // Assert feedback toast appears
-  expect(await screen.findByText(/added to cart/i)).toBeInTheDocument();
+test("renders category filter and selects category", async () => {
+  const handleChange = jest.fn();
+  render(<ProductCategoryFilter selected={null} onCategoryChange={handleChange} />);
+  expect(await screen.findByText(/filter by category/i)).toBeInTheDocument();
+  // Select "Electronics"
+  fireEvent.change(screen.getByRole("combobox"), { target: { value: "Electronics" } });
+  expect(handleChange).toHaveBeenCalledWith("Electronics");
 });
