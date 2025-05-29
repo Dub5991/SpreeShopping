@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { register, sendPasswordReset } from "../../firebase/auth";
-import { createUserDoc } from "../../firebase/firestore";
+import { login, sendPasswordReset } from "../../firebase/auth";
 import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/userSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
 const accent = "#6366f1";
 
-const Register: React.FC = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [resetEmail, setResetEmail] = useState<string>("");
@@ -17,23 +18,47 @@ const Register: React.FC = () => {
   const [showReset, setShowReset] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [resetLoading, setResetLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Autofill only after focus
+  const handleEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "username");
+  };
+  const handlePasswordFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "current-password");
+  };
+  const handleResetEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "username");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const userCredential = await register(email, password);
-      await createUserDoc(userCredential.user.uid, { email });
-      setError("");
-      // After registration, direct user to login page
-      navigate("/login");
+      const userCredential = await login(email, password);
+      if (userCredential?.user) {
+        dispatch(
+          setUser({
+            uid: userCredential.user.uid ?? "",
+            email: userCredential.user.email ?? "",
+            displayName: userCredential.user.displayName ?? "",
+            phone: (userCredential.user as any).phone ?? "",
+            address: (userCredential.user as any).address ?? "",
+            avatarUrl: userCredential.user.photoURL ?? ""
+          })
+        );
+        navigate("/profile");
+      } else {
+        setError("Login failed: user information not found.");
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Registration failed.");
+        setError("Login failed.");
       }
     }
     setLoading(false);
@@ -45,7 +70,7 @@ const Register: React.FC = () => {
     setError("");
     setResetLoading(true);
     try {
-      await sendPasswordReset((resetEmail ?? "") || (email ?? ""));
+      await sendPasswordReset(resetEmail || email);
       setResetMsg("Password reset email sent! Check your inbox.");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -87,18 +112,18 @@ const Register: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            Register for Spree
+            Login to Spree
           </motion.h2>
           <AnimatePresence>
             {!showReset ? (
               <motion.div
-                key="register"
+                key="login"
                 initial={{ opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                <Form onSubmit={handleSubmit} autoComplete="on">
+                <Form onSubmit={handleSubmit} autoComplete="off">
                   <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -106,10 +131,11 @@ const Register: React.FC = () => {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
-                      autoFocus
-                      autoComplete="username"
+                      autoComplete="off"
                       placeholder="you@email.com"
                       style={{ borderRadius: "1em" }}
+                      autoFocus={false}
+                      onFocus={handleEmailFocus}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
@@ -119,9 +145,11 @@ const Register: React.FC = () => {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       required
-                      autoComplete="new-password"
-                      placeholder="Create a password"
+                      autoComplete="off"
+                      placeholder="Your password"
                       style={{ borderRadius: "1em" }}
+                      autoFocus={false}
+                      onFocus={handlePasswordFocus}
                     />
                   </Form.Group>
                   <Button
@@ -139,9 +167,9 @@ const Register: React.FC = () => {
                     {loading ? (
                       <span className="spinner-border spinner-border-sm me-2" />
                     ) : (
-                      <span role="img" aria-label="register">📝</span>
+                      <span role="img" aria-label="login">🔓</span>
                     )}
-                    Register
+                    Login
                   </Button>
                   <div className="text-center mt-3">
                     <Button
@@ -155,9 +183,9 @@ const Register: React.FC = () => {
                     </Button>
                   </div>
                   <div className="text-center mt-2">
-                    <span>Already have an account? </span>
-                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
-                      Login
+                    <span>Don't have an account? </span>
+                    <Link to="/register" style={{ color: accent, fontWeight: 600 }}>
+                      Register
                     </Link>
                   </div>
                 </Form>
@@ -170,7 +198,7 @@ const Register: React.FC = () => {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                <Form onSubmit={handleReset}>
+                <Form onSubmit={handleReset} autoComplete="off">
                   <Form.Group className="mb-3">
                     <Form.Label>Enter your email to reset password</Form.Label>
                     <InputGroup>
@@ -181,7 +209,9 @@ const Register: React.FC = () => {
                         required
                         placeholder="you@email.com"
                         style={{ borderRadius: "1em" }}
-                        autoFocus
+                        autoFocus={false}
+                        autoComplete="off"
+                        onFocus={handleResetEmailFocus}
                       />
                     </InputGroup>
                   </Form.Group>
@@ -212,13 +242,13 @@ const Register: React.FC = () => {
                       onClick={() => setShowReset(false)}
                       tabIndex={0}
                     >
-                      Back to register
+                      Back to login
                     </Button>
                   </div>
                   <div className="text-center mt-2">
-                    <span>Already have an account? </span>
-                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
-                      Login
+                    <span>Don't have an account? </span>
+                    <Link to="/register" style={{ color: accent, fontWeight: 600 }}>
+                      Register
                     </Link>
                   </div>
                 </Form>
@@ -241,4 +271,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default Login;

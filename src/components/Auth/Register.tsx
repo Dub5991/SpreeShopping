@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { register, sendPasswordReset } from "../../firebase/auth";
 import { createUserDoc } from "../../firebase/firestore";
 import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
@@ -19,6 +19,17 @@ const Register: React.FC = () => {
   const [resetLoading, setResetLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  // Autofill only after focus
+  const handleEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "username");
+  };
+  const handlePasswordFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "new-password");
+  };
+  const handleResetEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.setAttribute("autocomplete", "username");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -28,8 +39,12 @@ const Register: React.FC = () => {
       await createUserDoc(userCredential.user.uid, { email });
       setError("");
       navigate("/login");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Registration failed.");
+      }
     }
     setLoading(false);
   };
@@ -40,10 +55,14 @@ const Register: React.FC = () => {
     setError("");
     setResetLoading(true);
     try {
-      await sendPasswordReset((resetEmail ?? "") || (email ?? ""));
+      await sendPasswordReset(resetEmail || email);
       setResetMsg("Password reset email sent! Check your inbox.");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Password reset failed.");
+      }
     }
     setResetLoading(false);
   };
@@ -89,30 +108,33 @@ const Register: React.FC = () => {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                <Form onSubmit={handleSubmit} autoComplete="on">
+                <Form onSubmit={handleSubmit} autoComplete="off">
                   <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      value={email ?? ""}
+                      value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
-                      autoFocus
-                      autoComplete="username"
+                      autoComplete="off"
                       placeholder="you@email.com"
                       style={{ borderRadius: "1em" }}
+                      autoFocus={false}
+                      onFocus={handleEmailFocus}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      value={password ?? ""}
+                      value={password}
                       onChange={e => setPassword(e.target.value)}
                       required
-                      autoComplete="new-password"
+                      autoComplete="off"
                       placeholder="Create a password"
                       style={{ borderRadius: "1em" }}
+                      autoFocus={false}
+                      onFocus={handlePasswordFocus}
                     />
                   </Form.Group>
                   <Button
@@ -145,6 +167,12 @@ const Register: React.FC = () => {
                       Forgot password?
                     </Button>
                   </div>
+                  <div className="text-center mt-2">
+                    <span>Already have an account? </span>
+                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
+                      Login
+                    </Link>
+                  </div>
                 </Form>
               </motion.div>
             ) : (
@@ -155,18 +183,20 @@ const Register: React.FC = () => {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3 }}
               >
-                <Form onSubmit={handleReset}>
+                <Form onSubmit={handleReset} autoComplete="off">
                   <Form.Group className="mb-3">
                     <Form.Label>Enter your email to reset password</Form.Label>
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={(resetEmail ?? "") || (email ?? "")}
+                        value={resetEmail || email}
                         onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
                         style={{ borderRadius: "1em" }}
-                        autoFocus
+                        autoFocus={false}
+                        autoComplete="off"
+                        onFocus={handleResetEmailFocus}
                       />
                     </InputGroup>
                   </Form.Group>
@@ -199,6 +229,12 @@ const Register: React.FC = () => {
                     >
                       Back to register
                     </Button>
+                  </div>
+                  <div className="text-center mt-2">
+                    <span>Already have an account? </span>
+                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
+                      Login
+                    </Link>
                   </div>
                 </Form>
               </motion.div>
