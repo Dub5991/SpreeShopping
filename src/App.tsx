@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Container, Navbar, Nav, Toast, ToastContainer } from "react-bootstrap";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaCartPlus } from "react-icons/fa";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
@@ -18,11 +19,70 @@ import SpreeLogo from "./components/SpreeLogo";
 const App: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
 
+  // Toast state for cart add notification
+  const [showToast, setShowToast] = useState(false);
+  const [toastProduct, setToastProduct] = useState<string | null>(null);
+
+  // Listen for cart:added events from anywhere in the app
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setToastProduct(detail?.name || null);
+      setShowToast(true);
+    };
+    window.addEventListener("cart:added", handler as EventListener);
+    return () => window.removeEventListener("cart:added", handler as EventListener);
+  }, []);
+
   // Collapse navbar after clicking a nav link
   const handleNavClick = () => setExpanded(false);
 
   return (
     <Router>
+      {/* Toast always fixed at top of viewport */}
+      <ToastContainer
+        position="top-center"
+        className="p-3"
+        style={{
+          zIndex: 3000,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "100vw",
+          pointerEvents: "none",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        {showToast && (
+          <Toast
+            bg="success"
+            onClose={() => setShowToast(false)}
+            show={showToast}
+            delay={1800}
+            autohide
+            style={{
+              minWidth: 220,
+              maxWidth: "90vw",
+              borderRadius: "1rem",
+              boxShadow: "0 4px 24px rgba(16,185,129,0.12)",
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: "1.05rem",
+              margin: "0 auto",
+              textAlign: "center",
+            }}
+          >
+            <Toast.Body>
+              <FaCartPlus className="me-2" />
+              <span style={{ color: "#fff" }}>
+                {toastProduct ? `"${toastProduct}" added to cart!` : "Added to cart!"}
+              </span>
+            </Toast.Body>
+          </Toast>
+        )}
+      </ToastContainer>
       {/* Animated background for the whole app */}
       <AnimatedBackground />
       {/* Main navigation bar */}
@@ -42,7 +102,6 @@ const App: React.FC = () => {
             onClick={handleNavClick}
             className="d-flex align-items-center gap-2"
           >
-            {/* Use only the size and className props for SpreeLogo */}
             <SpreeLogo size={40} className="d-inline-block align-top" />
             <span className="fw-bold ms-2" style={{ fontSize: 22, letterSpacing: 1 }}>
               Spree Store

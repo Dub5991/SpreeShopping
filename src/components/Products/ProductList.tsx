@@ -7,8 +7,6 @@ import {
   InputGroup,
   Form,
   Badge,
-  Toast,
-  ToastContainer,
 } from "react-bootstrap";
 import { getProducts } from "../../firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -47,8 +45,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
-  const [showToast, setShowToast] = useState(false);
-  const [toastProduct, setToastProduct] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,9 +66,8 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
       cart.push({ ...product, quantity: qty });
     }
     setCart(cart);
-    window.dispatchEvent(new CustomEvent("cart:added"));
-    setToastProduct(product.name);
-    setShowToast(true);
+    window.dispatchEvent(new CustomEvent("cart:added", { detail: { name: product.name } }));
+    // Toast is now handled at a higher level (App.tsx)
   };
 
   const handleQuantityChange = (id: string, value: number) => {
@@ -96,6 +91,7 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
         background: "linear-gradient(120deg, #f0f4f8 0%, #e0e7ff 100%)",
         minHeight: "100vh",
         padding: "3rem 0",
+        position: "relative",
       }}
     >
       <Row className="g-5 justify-content-center">
@@ -373,43 +369,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
           ))}
         </AnimatePresence>
       </Row>
-      {/* Toast Notification for cart addition */}
-      <ToastContainer position="top-center" className="p-3" style={{ zIndex: 3000 }}>
-        <AnimatePresence>
-          {showToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.4, type: "spring" }}
-            >
-              <Toast
-                bg="success"
-                onClose={() => setShowToast(false)}
-                show={showToast}
-                delay={1800}
-                autohide
-                style={{
-                  minWidth: 240,
-                  borderRadius: "1rem",
-                  boxShadow: "0 4px 24px rgba(16,185,129,0.12)",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: "1.08rem",
-                  textAlign: "center",
-                }}
-              >
-                <Toast.Body>
-                  <FaCartPlus className="me-2" />
-                  <span style={{ color: "#fff" }}>
-                    {toastProduct ? `"${toastProduct}" added to cart!` : "Added to cart!"}
-                  </span>
-                </Toast.Body>
-              </Toast>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </ToastContainer>
     </div>
   );
 };
