@@ -42,7 +42,7 @@ const App: React.FC = () => {
             onClick={handleNavClick}
             className="d-flex align-items-center gap-2"
           >
-            {/* Use only the size prop for SpreeLogo */}
+            {/* Use only the size and className props for SpreeLogo */}
             <SpreeLogo size={40} className="d-inline-block align-top" />
             <span className="fw-bold ms-2" style={{ fontSize: 22, letterSpacing: 1 }}>
               Spree Store
