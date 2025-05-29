@@ -1,5 +1,3 @@
-// Modern, professional login form with password reset option and enhanced UI/UX
-
 import React, { useState } from "react";
 import { login, sendPasswordReset } from "../../firebase/auth";
 import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";
@@ -13,14 +11,14 @@ const accent = "#6366f1";
 
 const Login: React.FC = () => {
   // State for login and reset forms
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
-  const [error, setError] = useState("");
-  const [resetMsg, setResetMsg] = useState("");
-  const [showReset, setShowReset] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [resetEmail, setResetEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [resetMsg, setResetMsg] = useState<string>("");
+  const [showReset, setShowReset] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [resetLoading, setResetLoading] = useState<boolean>(false);
 
   // Navigation and Redux dispatch
   const navigate = useNavigate();
@@ -56,7 +54,8 @@ const Login: React.FC = () => {
     setError("");
     setResetLoading(true);
     try {
-      await sendPasswordReset(resetEmail || email || "");
+      // Always pass a string to sendPasswordReset
+      await sendPasswordReset((resetEmail ?? "") || (email ?? ""));
       setResetMsg("Password reset email sent! Check your inbox.");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -114,7 +113,7 @@ const Login: React.FC = () => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      value={resetEmail ?? email ?? ""}
+                      value={email ?? ""}
                       onChange={e => setEmail(e.target.value)}
                       required
                       placeholder="you@email.com"
@@ -126,7 +125,7 @@ const Login: React.FC = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      value={password}
+                      value={password ?? ""}
                       onChange={e => setPassword(e.target.value)}
                       required
                       autoComplete="current-password"
@@ -180,7 +179,7 @@ const Login: React.FC = () => {
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={resetEmail || email || ""}
+                        value={(resetEmail ?? "") || (email ?? "")}
                         onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
