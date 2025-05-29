@@ -181,7 +181,7 @@ const Login: React.FC = () => {
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={resetEmail || email || ""}
+                        value={resetEmail !== null && resetEmail !== undefined ? resetEmail : email !== null && email !== undefined ? email : ""}
                         onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
