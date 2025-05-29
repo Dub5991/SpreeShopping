@@ -39,8 +39,12 @@ const Login: React.FC = () => {
       setError("");
       // Redirect to profile page
       navigate("/profile");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
     setLoading(false);
   };
@@ -51,11 +55,15 @@ const Login: React.FC = () => {
     setResetMsg("");
     setError("");
     setResetLoading(true);
-    try {
-      // Send password reset email via Firebase
-      await sendPasswordReset(resetEmail || email);
-      setResetMsg("Password reset email sent! Check your inbox.");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
+    }
+    setResetLoading(false);
+  };
       setError(err.message);
     }
     setResetLoading(false);
@@ -114,10 +122,9 @@ const Login: React.FC = () => {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
-                      autoFocus
-                      autoComplete="username"
                       placeholder="you@email.com"
                       style={{ borderRadius: "1em" }}
+                      autoFocus
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
