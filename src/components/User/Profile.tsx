@@ -20,6 +20,7 @@ import AnimatedCard from "../AnimatedCard";
 import DeleteAccount from "./DeleteAccount";
 import EditProfile from "./EditProfile";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const defaultAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=spree";
 const accent = "#6366f1";
@@ -113,7 +114,7 @@ const Profile: React.FC = () => {
       setSuccessMsg("Profile updated successfully!");
       setShowToast(true);
       setAvatarFile(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Failed to update profile. Please try again.");
     }
     setSaving(false);
@@ -132,7 +133,9 @@ const Profile: React.FC = () => {
       <AnimatedCard>
         <Card className="text-center" style={{ border: "none", background: "#f8fafc" }}>
           <Card.Body>
-            <h3 style={{ color: accent, fontWeight: 700 }}>Please log in to view your profile.</h3>
+            <h3 style={{ color: accent, fontWeight: 700 }}>
+              Please <Link to="/login" style={{ color: accent, textDecoration: "underline" }}>log in</Link> to view your profile.
+            </h3>
           </Card.Body>
         </Card>
       </AnimatedCard>
@@ -154,7 +157,6 @@ const Profile: React.FC = () => {
       </div>
     );
 
-  // --- TEST FRIENDLY: Show "Loading..." if profile is not yet loaded, otherwise show profile ---
   if (!profile) {
     return <div>Loading...</div>;
   }
