@@ -1,7 +1,7 @@
 
 // Tell TypeScript to ignore the unused import for this file
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React from "react";import React from "react";
+import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Profile from "../components/User/Profile";
