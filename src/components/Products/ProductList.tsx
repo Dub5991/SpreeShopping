@@ -44,7 +44,6 @@ const cardVariants = {
 };
 
 const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
-  // --- State hooks ---
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
@@ -52,7 +51,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
   const [toastProduct, setToastProduct] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // --- Fetch products on mount ---
   useEffect(() => {
     getProducts().then((snapshot) => {
       const prods = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -62,7 +60,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
     });
   }, []);
 
-  // --- Add product to cart handler ---
   const handleAddToCart = (product: any) => {
     const cart = getCart();
     const existing = cart.find((item: any) => item.id === product.id);
@@ -78,12 +75,10 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
     setShowToast(true);
   };
 
-  // --- Handle quantity input change ---
   const handleQuantityChange = (id: string, value: number) => {
     setQuantities((q) => ({ ...q, [id]: value }));
   };
 
-  // --- Loading spinner ---
   if (loading)
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
@@ -91,7 +86,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
       </div>
     );
 
-  // --- Filter products by category if provided ---
   const filteredProducts = category
     ? products.filter((product) => product.category === category)
     : products;
@@ -193,7 +187,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                 </motion.div>
                 <Card.Body style={{ paddingTop: 170 }}>
                   <div className="d-flex align-items-center mb-2">
-                    {/* Product name */}
                     <Card.Title
                       style={{
                         fontWeight: 900,
@@ -207,7 +200,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                     >
                       {product.name}
                     </Card.Title>
-                    {/* Category badge */}
                     <Badge
                       style={{
                         background: getAccent(idx),
@@ -223,7 +215,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                       {product.category}
                     </Badge>
                   </div>
-                  {/* Product description */}
                   <Card.Text
                     style={{
                       color: "#64748b",
@@ -236,7 +227,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                   >
                     {product.description}
                   </Card.Text>
-                  {/* Price and stock info */}
                   <div className="d-flex align-items-center mb-3">
                     <span
                       style={{
@@ -255,7 +245,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                     >
                       <FaBoxOpen className="me-1" /> {product.stock} in stock
                     </span>
-                    {/* Low stock warning */}
                     {product.stock < 5 && product.stock > 0 && (
                       <Badge
                         bg="danger"
@@ -265,7 +254,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                         <FaExclamationTriangle className="me-1" /> Low!
                       </Badge>
                     )}
-                    {/* Out of stock badge */}
                     {product.stock < 1 && (
                       <Badge
                         bg="secondary"
@@ -276,7 +264,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                       </Badge>
                     )}
                   </div>
-                  {/* Quantity input */}
                   <div className="d-flex align-items-center mb-3">
                     <InputGroup
                       style={{
@@ -319,7 +306,6 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                       />
                     </InputGroup>
                   </div>
-                  {/* Action buttons: Details and Add to Cart */}
                   <div className="d-flex gap-2">
                     <motion.button
                       type="button"
@@ -388,13 +374,13 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
         </AnimatePresence>
       </Row>
       {/* Toast Notification for cart addition */}
-      <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 3000 }}>
+      <ToastContainer position="top-center" className="p-3" style={{ zIndex: 3000 }}>
         <AnimatePresence>
           {showToast && (
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: -40 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
+              exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.4, type: "spring" }}
             >
               <Toast
@@ -404,12 +390,13 @@ const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
                 delay={1800}
                 autohide
                 style={{
-                  minWidth: 220,
+                  minWidth: 240,
                   borderRadius: "1rem",
                   boxShadow: "0 4px 24px rgba(16,185,129,0.12)",
                   color: "#fff",
                   fontWeight: 600,
-                  fontSize: "1.05rem",
+                  fontSize: "1.08rem",
+                  textAlign: "center",
                 }}
               >
                 <Toast.Body>

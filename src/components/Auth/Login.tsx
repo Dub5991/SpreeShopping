@@ -50,7 +50,7 @@ const Login: React.FC = () => {
             avatarUrl: userCredential.user.photoURL ?? ""
           })
         );
-        navigate("/profile");
+        navigate("/products"); // Route to Products page after login
       } else {
         setError("Login failed: user information not found.");
       }
