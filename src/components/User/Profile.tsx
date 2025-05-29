@@ -1,6 +1,3 @@
-// src/components/User/Profile.tsx
-// Gamified, professional user profile page with react-bootstrap, framer-motion, and enhanced UX
-
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -8,7 +5,6 @@ import { getUserDoc, updateUserProfile } from "../../firebase/firestore";
 import {
   Card,
   Spinner,
-  Button,
   Badge,
   Form,
   Alert,
@@ -25,14 +21,9 @@ import DeleteAccount from "./DeleteAccount";
 import EditProfile from "./EditProfile";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Placeholder avatar URL
 const defaultAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=spree";
-
-// Color constants for UI
 const accent = "#6366f1";
-const success = "#10b981";
 const gold = "#fbbf24";
-const xpColor = "#60a5fa";
 
 // Calculate gamified XP and level based on profile completeness
 const gamifyLevel = (profile: any) => {
@@ -45,8 +36,10 @@ const gamifyLevel = (profile: any) => {
   return { xp, level };
 };
 
+type User = { uid: string; [key: string]: any };
+
 const Profile: React.FC = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user) as User | null;
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
@@ -60,7 +53,6 @@ const Profile: React.FC = () => {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch user profile from Firestore on mount or user change
   useEffect(() => {
     const fetchProfile = async () => {
       if (user && user.uid) {
@@ -77,12 +69,10 @@ const Profile: React.FC = () => {
     fetchProfile();
   }, [user]);
 
-  // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle avatar file selection
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAvatarFile(e.target.files[0]);
@@ -90,15 +80,13 @@ const Profile: React.FC = () => {
     }
   };
 
-  // Simulate avatar upload (replace with Firebase Storage logic in production)
-  const uploadAvatar = async (file: File) => {
+  const uploadAvatar = async (_file: File) => {
     setAvatarUploading(true);
     await new Promise(res => setTimeout(res, 1200));
     setAvatarUploading(false);
     return avatarUrl;
   };
 
-  // Save profile changes to Firestore
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -109,6 +97,7 @@ const Profile: React.FC = () => {
       if (avatarFile) {
         avatarDownloadUrl = await uploadAvatar(avatarFile);
       }
+      if (!user) throw new Error("User not found");
       await updateUserProfile(user.uid, {
         displayName: form.displayName || "",
         phone: form.phone || "",
@@ -126,17 +115,14 @@ const Profile: React.FC = () => {
     setSaving(false);
   };
 
-  // Animation variants for framer-motion
   const toastVariants = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: 40 }
   };
 
-  // Gamification: calculate XP and level
   const { xp, level } = gamifyLevel(profile);
 
-  // If user is not logged in
   if (!user)
     return (
       <AnimatedCard>
@@ -148,7 +134,6 @@ const Profile: React.FC = () => {
       </AnimatedCard>
     );
 
-  // Show loading spinner while fetching profile
   if (loading)
     return (
       <div
@@ -233,20 +218,7 @@ const Profile: React.FC = () => {
                   gap: 12,
                 }}
               >
-                <span>Profile</span>
-                <Badge
-                  bg="success"
-                  style={{
-                    background: success,
-                    fontSize: "1.1rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.5px",
-                    padding: "0.5em 1em",
-                    borderRadius: "1.5em",
-                  }}
-                >
-                  {profile?.role ? profile.role : "User"}
-                </Badge>
+                Profile
               </Card.Title>
             </div>
             {/* Gamified XP Progress */}
@@ -309,7 +281,6 @@ const Profile: React.FC = () => {
                       border: `4px solid ${accent}`,
                       objectFit: "cover",
                       background: "#fff",
-                      transition: "box-shadow 0.3s cubic-bezier(.4,2,.6,1)",
                     }}
                   />
                   {/* Edit icon overlay when in edit mode */}
@@ -399,8 +370,9 @@ const Profile: React.FC = () => {
                     </Col>
                   </Row>
                   <div className="d-flex mt-4 gap-2">
-                    <Button
-                      variant="primary"
+                    <motion.button
+                      type="button"
+                      className="btn btn-primary"
                       style={{
                         marginRight: 12,
                         fontWeight: 700,
@@ -412,11 +384,10 @@ const Profile: React.FC = () => {
                         transition: "background 0.2s",
                       }}
                       onClick={() => setEditMode(true)}
-                      as={motion.button}
                       whileTap={{ scale: 0.96 }}
                     >
                       <span role="img" aria-label="edit">🛠️</span> Edit Profile
-                    </Button>
+                    </motion.button>
                     <DeleteAccount />
                   </div>
                 </motion.div>
@@ -427,17 +398,14 @@ const Profile: React.FC = () => {
               <EditProfile
                 form={form}
                 setForm={setForm}
-                avatarUrl={avatarUrl}
                 avatarUploading={avatarUploading}
                 saving={saving}
                 handleChange={handleChange}
                 handleSave={handleSave}
-                handleAvatarChange={handleAvatarChange}
                 setEditMode={setEditMode}
                 setAvatarUrl={setAvatarUrl}
                 setAvatarFile={setAvatarFile}
                 profile={profile}
-                fileInputRef={fileInputRef}
               />
             )}
           </Card.Body>

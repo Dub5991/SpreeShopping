@@ -6,121 +6,58 @@ import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootst
 import { useNavigate } from "react-router-dom";
 import AnimatedCard from "../AnimatedCard";
 
-// OrderList component displays a list of orders for the logged-in user
+type User = { uid: string };
+type Order = { id: string; [key: string]: any };
+
 const OrderList: React.FC = () => {
-  // Get the current user from Redux store
-  const user = useSelector((state: RootState) => state.user.user);
-  // State to hold fetched orders
-  const [orders, setOrders] = useState<any[]>([]);
-  // Loading state for async fetch
+  const user = useSelector((state: RootState) => state.user.user) as User | null;
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  // React Router navigation hook
   const navigate = useNavigate();
 
-  // Fetch orders when user changes
   useEffect(() => {
     if (!user) return;
     getOrdersByUser(user.uid).then(snapshot => {
-      // Map Firestore docs to order objects
-      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setOrders(snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
     });
   }, [user]);
 
-  // Show alert if user is not logged in
-  if (!user)
-    return (
-      <Container className="py-5">
-        <Alert variant="warning" className="text-center">
-          Please log in to view your orders.
-        </Alert>
-      </Container>
-    );
+  if (loading) return <Spinner animation="border" />;
+  if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
-  // Show spinner while loading
-  if (loading)
-    return (
-      <Container className="py-5 d-flex justify-content-center align-items-center" style={{ minHeight: 200 }}>
-        <Spinner animation="border" />
-      </Container>
-    );
-
-  // Render orders table
   return (
-    <Container fluid className="py-4 px-1 px-md-4">
-      <AnimatedCard>
-        <Row className="mb-3">
-          <Col xs={12}>
-            <h2 className="text-center mb-0" style={{ fontWeight: 700, fontSize: "2rem" }}>
-              Your Orders
-            </h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12}>
-            <div style={{ overflowX: "auto" }}>
-              <Table
-                striped
-                bordered
-                hover
-                responsive
-                className="mb-0"
-                style={{
-                  minWidth: 400,
-                  background: "#fff",
-                  borderRadius: 12,
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                  fontSize: "1rem"
-                }}
-              >
-                <thead style={{ background: "#f8f9fa" }}>
-                  <tr>
-                    <th style={{ minWidth: 120 }}>Order ID</th>
-                    <th style={{ minWidth: 120 }}>Date</th>
-                    <th style={{ minWidth: 80 }}>Total</th>
-                    <th style={{ minWidth: 90 }}>Details</th>
+    <Container>
+      <Row>
+        <Col>
+          <AnimatedCard>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map(order => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+                    <td>{order.createdAt?.toDate?.().toLocaleString?.() ?? "N/A"}</td>
+                    <td>{order.status ?? "N/A"}</td>
+                    <td>
+                      <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>
+                        View
+                      </Button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {/* Show message if no orders */}
-                  {orders.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="text-center text-muted py-4">
-                        No orders found.
-                      </td>
-                    </tr>
-                  ) : (
-                    // Render each order row
-                    orders.map(order => (
-                      <tr key={order.id}>
-                        <td style={{ wordBreak: "break-all", fontWeight: 500 }}>{order.id}</td>
-                        <td>
-                          {/* Format Firestore timestamp if available */}
-                          {order.createdAt?.toDate?.().toLocaleString() ||
-                            "N/A"}
-                        </td>
-                        <td style={{ fontWeight: 600, color: "#198754" }}>
-                          ${order.total?.toFixed(2)}
-                        </td>
-                        <td>
-                          <Button
-                            size="sm"
-                            variant="primary"
-                            style={{ minWidth: 70, fontWeight: 500 }}
-                            onClick={() => navigate(`/orders/${order.id}`)}
-                          >
-                            View
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
-            </div>
-          </Col>
-        </Row>
-      </AnimatedCard>
+                ))}
+              </tbody>
+            </Table>
+          </AnimatedCard>
+        </Col>
+      </Row>
     </Container>
   );
 };

@@ -5,13 +5,12 @@ import React, { useState } from "react";
 import ProductManager from "../components/Products/ProductManager";
 import ProductList from "../components/Products/ProductList";
 import ProductCategoryFilter from "../components/Products/ProductCategoryFilter";
-import { Button, Container, Row, Col, Badge } from "react-bootstrap";
+import { Container, Row, Col, Badge } from "react-bootstrap";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
 // Color palette for theme
 const accent = "#6366f1";
-const accent2 = "#f59e42";
 const bgGradient = "linear-gradient(120deg, #f8fafc 60%, #e0e7ff 100%)";
 const adminGradient = "linear-gradient(90deg, #f43f5e 0%, #6366f1 100%)";
 const userGradient = "linear-gradient(90deg, #6366f1 0%, #10b981 100%)";
@@ -29,6 +28,8 @@ const ProductsPage: React.FC = () => {
         background: bgGradient,
         borderRadius: "2rem",
         boxShadow: "0 8px 32px rgba(99,102,241,0.10), 0 1.5px 8px rgba(30,41,59,0.08)",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       {/* Header and Admin Toggle */}
@@ -69,15 +70,17 @@ const ProductsPage: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, type: "spring" }}
           >
-            <Button
-              variant={adminMode ? "danger" : "outline-primary"}
+            <motion.button
+              type="button"
               className={clsx(
                 "fw-bold",
                 "rounded-pill",
                 "shadow-sm",
                 "px-4",
                 "py-2",
-                "fs-5"
+                "fs-5",
+                "btn",
+                adminMode ? "btn-danger" : "btn-outline-primary"
               )}
               style={{
                 background: adminMode ? adminGradient : userGradient,
@@ -90,7 +93,6 @@ const ProductsPage: React.FC = () => {
                 transition: "background 0.18s, box-shadow 0.18s, transform 0.12s",
               }}
               onClick={() => setAdminMode((prev) => !prev)}
-              as={motion.button}
               whileTap={{ scale: 0.97 }}
             >
               {adminMode ? (
@@ -102,7 +104,7 @@ const ProductsPage: React.FC = () => {
                   <span role="img" aria-label="shopper">🛒</span> Admin Mode: OFF
                 </>
               )}
-            </Button>
+            </motion.button>
           </motion.div>
         </Col>
       </Row>

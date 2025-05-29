@@ -1,6 +1,3 @@
-// src/pages/Cart.tsx
-// Professional, gamified, and color-optimized Cart page for Spree
-
 import React, { useState } from "react";
 import {
   Table,
@@ -19,18 +16,23 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// --- Types ---
+type CartItem = { id: string; name: string; price: number; quantity: number; stock: number };
+type Product = { id: string; name: string; price: number; stock: number };
+type User = { uid: string; [key: string]: any };
+
 // --- Cart helpers ---
-const getCart = () => JSON.parse(localStorage.getItem("cart") || "[]");
-const setCart = (cart: any[]) => localStorage.setItem("cart", JSON.stringify(cart));
+const getCart = (): CartItem[] => JSON.parse(localStorage.getItem("cart") || "[]");
+const setCart = (cart: CartItem[]) => localStorage.setItem("cart", JSON.stringify(cart));
 
 // --- Main Cart Page ---
 const CartPage: React.FC = () => {
-  const [cart, setCartState] = useState(getCart());
+  const [cart, setCartState] = useState<CartItem[]>(getCart());
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user) as User | null;
   const navigate = useNavigate();
 
   // --- Animation variants ---
@@ -71,10 +73,10 @@ const CartPage: React.FC = () => {
   );
 
   // --- Cart logic ---
-  const total = cart.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);
 
   const handleQuantityChange = (id: string, value: number) => {
-    const updated = cart.map((item: any) =>
+    const updated = cart.map((item: CartItem) =>
       item.id === id ? { ...item, quantity: Math.max(1, value) } : item
     );
     setCart(updated);
@@ -84,7 +86,7 @@ const CartPage: React.FC = () => {
   };
 
   const handleRemove = (id: string) => {
-    const updated = cart.filter((item: any) => item.id !== id);
+    const updated = cart.filter((item: CartItem) => item.id !== id);
     setCart(updated);
     setCartState(updated);
     setToastMsg("Item removed from cart.");
@@ -102,9 +104,9 @@ const CartPage: React.FC = () => {
     setCheckoutLoading(true);
     // Check stock before placing order
     const productsSnap = await getProducts();
-    const products = productsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const products: Product[] = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     for (const item of cart) {
-      const prod = products.find(p => p.id === item.id);
+      const prod = products.find((p: Product) => p.id === item.id);
       if (!prod || prod.stock < item.quantity) {
         setCheckoutError(`Not enough stock for ${item.name}`);
         setCheckoutLoading(false);
@@ -119,7 +121,7 @@ const CartPage: React.FC = () => {
     });
     // Update stock
     for (const item of cart) {
-      const prod = products.find(p => p.id === item.id);
+      const prod = products.find((p: Product) => p.id === item.id);
       if (prod) {
         await updateProduct(item.id, { stock: prod.stock - item.quantity });
       }
@@ -199,7 +201,7 @@ const CartPage: React.FC = () => {
                 </thead>
                 <tbody>
                   <AnimatePresence>
-                    {cart.map((item: any, idx: number) => (
+                    {cart.map((item: CartItem, idx: number) => (
                       <motion.tr
                         key={item.id}
                         variants={rowVariants}
@@ -277,12 +279,11 @@ const CartPage: React.FC = () => {
             >
               Total: <span className="text-success">${total.toFixed(2)}</span>
             </motion.div>
-            <Button
-              variant="success"
-              className={checkoutBtnClass}
+            <motion.button
+              type="button"
+              className={checkoutBtnClass + " btn btn-success"}
               onClick={handleCheckout}
               disabled={checkoutLoading}
-              as={motion.button}
               whileTap={{ scale: 0.97 }}
               style={{
                 background: "linear-gradient(90deg, #6366f1 0%, #10b981 100%)",
@@ -300,7 +301,7 @@ const CartPage: React.FC = () => {
                   <span role="img" aria-label="checkout">💳</span> Checkout
                 </>
               )}
-            </Button>
+            </motion.button>
           </>
         )}
       </motion.div>
