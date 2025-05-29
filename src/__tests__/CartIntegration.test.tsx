@@ -1,9 +1,7 @@
 // @ts-ignore
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import '@testing-library/jest-dom';
-import { BrowserRouter } from "react-router-dom";
-import ProductList from "../components/Products/ProductList";
+import App from "../App"; // Import your App component
 
 // Mock getProducts to return a single product
 jest.mock("../firebase/firestore", () => ({
@@ -27,14 +25,11 @@ jest.mock("../firebase/firestore", () => ({
 }));
 
 test("adds product to cart and updates cart", async () => {
-  render(
-    <BrowserRouter>
-      <ProductList />
-    </BrowserRouter>
-  );
+  render(<App />);
+  // Navigate to products page if needed, or ensure it's the default route
   // Find the add button for the product
   const addButton = await screen.findByRole("button", { name: /add/i });
   fireEvent.click(addButton);
   // Assert feedback toast appears
-  expect(await screen.findByText(/added to cart/i)).toBeInTheDocument();
+  expect(await screen.findByText((content) => /added to cart/i.test(content))).toBeInTheDocument();
 });
