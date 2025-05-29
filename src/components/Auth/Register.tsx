@@ -1,0 +1,242 @@
+// src/components/Auth/Register.tsx
+// Modern, professional register form with enhanced UI/UX and password reset option
+
+import React, { useState } from "react";
+import { register, sendPasswordReset } from "../../firebase/auth";
+import { createUserDoc } from "../../firebase/firestore";
+import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import clsx from "clsx";
+
+// Accent color for UI elements
+const accent = "#6366f1";
+
+const Register: React.FC = () => {
+  // State variables for form fields and UI state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [error, setError] = useState("");
+  const [resetMsg, setResetMsg] = useState("");
+  const [showReset, setShowReset] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Handle registration form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      // Register user with email and password
+      const userCredential = await register(email, password);
+      // Create user document in Firestore
+      await createUserDoc(userCredential.user.uid, { email });
+      setError("");
+      // Redirect to login page after successful registration
+      navigate("/login");
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  // Handle password reset form submission
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetMsg("");
+    setError("");
+    setResetLoading(true);
+    try {
+      // Send password reset email (uses resetEmail if provided, otherwise email)
+      await sendPasswordReset(resetEmail || email);
+      setResetMsg("Password reset email sent! Check your inbox.");
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setResetLoading(false);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, type: "spring" }}
+      className="d-flex align-items-center justify-content-center"
+      style={{ minHeight: "80vh" }}
+    >
+      <Card
+        className={clsx("shadow-lg", "p-3", "border-0")}
+        style={{
+          maxWidth: 410,
+          width: "100%",
+          borderRadius: "2rem",
+          background: "linear-gradient(120deg, #f8fafc 70%, #e0e7ff 100%)",
+          boxShadow: "0 8px 32px rgba(99,102,241,0.10), 0 1.5px 8px rgba(30,41,59,0.08)",
+        }}
+      >
+        <Card.Body>
+          {/* Animated heading */}
+          <motion.h2
+            className="mb-4 fw-bold text-center"
+            style={{
+              color: accent,
+              letterSpacing: "-1px",
+              textShadow: "0 2px 8px #6366f122",
+            }}
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Register for Spree
+          </motion.h2>
+          <AnimatePresence>
+            {/* Show register form or password reset form based on showReset */}
+            {!showReset ? (
+              <motion.div
+                key="register"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Registration Form */}
+                <Form onSubmit={handleSubmit} autoComplete="on">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      required
+                      autoFocus
+                      autoComplete="username"
+                      placeholder="you@email.com"
+                      style={{ borderRadius: "1em" }}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      required
+                      autoComplete="new-password"
+                      placeholder="Create a password"
+                      style={{ borderRadius: "1em" }}
+                    />
+                  </Form.Group>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="w-100 fw-bold rounded-pill"
+                    style={{
+                      background: accent,
+                      border: "none",
+                      letterSpacing: "0.03em",
+                      fontSize: "1.1rem",
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="spinner-border spinner-border-sm me-2" />
+                    ) : (
+                      <span role="img" aria-label="register">📝</span>
+                    )}
+                    Register
+                  </Button>
+                  {/* Link to show password reset form */}
+                  <div className="text-center mt-3">
+                    <Button
+                      variant="link"
+                      className="p-0 fw-semibold"
+                      style={{ color: accent, textDecoration: "underline" }}
+                      onClick={() => setShowReset(true)}
+                      tabIndex={0}
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
+                </Form>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="reset"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Password Reset Form */}
+                <Form onSubmit={handleReset}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Enter your email to reset password</Form.Label>
+                    <InputGroup>
+                      <Form.Control
+                        type="email"
+                        value={resetEmail || email}
+                        onChange={e => setResetEmail(e.target.value)}
+                        required
+                        placeholder="you@email.com"
+                        style={{ borderRadius: "1em" }}
+                        autoFocus
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                  <Button
+                    type="submit"
+                    variant="info"
+                    className="w-100 fw-bold rounded-pill"
+                    style={{
+                      background: "#38bdf8",
+                      border: "none",
+                      letterSpacing: "0.03em",
+                      fontSize: "1.1rem",
+                    }}
+                    disabled={resetLoading}
+                  >
+                    {resetLoading ? (
+                      <span className="spinner-border spinner-border-sm me-2" />
+                    ) : (
+                      <span role="img" aria-label="reset">✉️</span>
+                    )}
+                    Send Reset Email
+                  </Button>
+                  {/* Link to go back to register form */}
+                  <div className="text-center mt-3">
+                    <Button
+                      variant="link"
+                      className="p-0 fw-semibold"
+                      style={{ color: accent, textDecoration: "underline" }}
+                      onClick={() => setShowReset(false)}
+                      tabIndex={0}
+                    >
+                      Back to register
+                    </Button>
+                  </div>
+                </Form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* Error alert */}
+          {error && (
+            <Alert variant="danger" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
+              {error}
+            </Alert>
+          )}
+          {/* Success alert for password reset */}
+          {resetMsg && (
+            <Alert variant="success" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
+              {resetMsg}
+            </Alert>
+          )}
+        </Card.Body>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default Register;

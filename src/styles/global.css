@@ -1,0 +1,92 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Background and base */
+body {
+  background: linear-gradient(120deg, #f8fafc 60%, #e0e7ff 100%);
+  color: #1e293b;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+}
+
+/* Card and modal enhancements */
+.card, .modal-content {
+  border-radius: 1.25rem !important;
+  box-shadow: 0 8px 32px rgba(99,102,241,0.08), 0 1.5px 8px rgba(30,41,59,0.06);
+  border: none !important;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 2px 12px rgba(30,41,59,0.10);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-primary, .btn-success {
+  border-radius: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #6366f1 80%, #818cf8 100%);
+  border: none;
+}
+
+.btn-success {
+  background: linear-gradient(90deg, #10b981 80%, #34d399 100%);
+  border: none;
+}
+
+.btn-danger {
+  background: linear-gradient(90deg, #ef4444 80%, #f87171 100%);
+  border: none;
+}
+
+.btn:active, .btn:focus {
+  transform: scale(0.97);
+  box-shadow: 0 1px 4px rgba(99,102,241,0.10);
+}
+
+input, textarea, .form-control {
+  border-radius: 0.5rem !important;
+  border: 1.5px solid #e0e7ff !important;
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  transition: border 0.18s;
+}
+
+input:focus, textarea:focus, .form-control:focus {
+  border-color: #6366f1 !important;
+  background: #fff !important;
+}
+
+.badge {
+  border-radius: 0.5rem;
+  font-size: 0.95em;
+  padding: 0.45em 0.9em;
+  font-weight: 600;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(.23,1.01,.32,1) both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+/* Cart badge */
+.cart-badge {
+  background: #f59e42;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 50%;
+  padding: 0.3em 0.7em;
+  font-size: 1em;
+  margin-left: 0.5em;
+  box-shadow: 0 2px 8px rgba(245,158,66,0.18);
+}

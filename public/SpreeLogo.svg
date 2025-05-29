@@ -1,0 +1,159 @@
+<!-- filepath: c:\Users\Snell\spree\public\SpreeLogo.svg -->
+<svg
+  width="72"
+  height="72"
+  viewBox="0 0 120 120"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="Spree Logo"
+>
+  <!-- S Shape: Green to Blue, symbolizing trust & growth -->
+  <path
+    d="M35 40 Q35 25 60 25 Q85 25 85 40 Q85 55 60 55 Q35 55 35 70 Q35 85 60 85 Q85 85 85 70"
+    stroke="url(#sGradientEcom)"
+    stroke-width="12"
+    stroke-linecap="round"
+    fill="none"
+    filter="url(#sShadowEcom)"
+  />
+  <!-- Dot: Yellow/Gold, symbolizing value -->
+  <ellipse
+    cx="100"
+    cy="38"
+    rx="7"
+    ry="5"
+    fill="url(#dotGradientEcom)"
+    filter="url(#dotShadowEcom)"
+  />
+  <!-- Sparkle: Blue, trust & digital -->
+  <g>
+    <ellipse
+      cx="25"
+      cy="25"
+      rx="4"
+      ry="4"
+      fill="url(#sparkleGradientEcom)"
+      filter="url(#sparkleShadowEcom)"
+    />
+    <rect
+      x="24.5"
+      y="19"
+      width="1"
+      height="12"
+      rx="0.5"
+      fill="#38bdf8"
+      opacity="0.7"
+    />
+    <rect
+      x="19"
+      y="24.5"
+      width="12"
+      height="1"
+      rx="0.5"
+      fill="#38bdf8"
+      opacity="0.7"
+    />
+  </g>
+  <!-- Floating Orbs: Green & Blue, commerce & trust -->
+  <circle
+    cx="18"
+    cy="90"
+    r="5"
+    fill="url(#orb1GradientEcom)"
+    filter="url(#orbShadowEcom)"
+  />
+  <circle
+    cx="105"
+    cy="80"
+    r="3"
+    fill="url(#orb2GradientEcom)"
+    filter="url(#orbShadowEcom)"
+  />
+  <!-- "Spree" text: Blue to Green, modern e-commerce -->
+  <g>
+    <text
+      x="60"
+      y="110"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Segoe UI', Arial, sans-serif"
+      font-weight="bold"
+      font-size="30"
+      fill="url(#textGradientEcom)"
+      filter="url(#textShadowEcom)"
+      letter-spacing="2"
+      style="text-shadow:0 4px 0 #bdbdbd,0 8px 18px rgba(34,197,94,0.14),0 0 8px #34d399;paint-order:stroke fill;"
+    >
+      Spree
+    </text>
+    <!-- Extrusion -->
+    <text
+      x="60"
+      y="113"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Segoe UI', Arial, sans-serif"
+      font-weight="bold"
+      font-size="30"
+      fill="#38bdf8"
+      opacity="0.18"
+      style="filter:blur(2px)"
+    >
+      Spree
+    </text>
+  </g>
+  <!-- Gradients and shadows -->
+  <defs>
+    <!-- S gradient: Green to Blue -->
+    <linearGradient id="sGradientEcom" x1="35" y1="25" x2="85" y2="85" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22c55e" />
+      <stop offset="0.5" stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#2563eb" />
+    </linearGradient>
+    <!-- Dot gradient: Gold -->
+    <radialGradient id="dotGradientEcom" cx="100" cy="38" r="10" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fde047" />
+      <stop offset="1" stop-color="#fbbf24" />
+    </radialGradient>
+    <!-- Sparkle gradient: Blue -->
+    <radialGradient id="sparkleGradientEcom" cx="25" cy="25" r="8" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#2563eb" />
+    </radialGradient>
+    <!-- Orbs gradients -->
+    <radialGradient id="orb1GradientEcom" cx="18" cy="90" r="8" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22c55e" />
+      <stop offset="1" stop-color="#bbf7d0" />
+    </radialGradient>
+    <radialGradient id="orb2GradientEcom" cx="105" cy="80" r="6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#bae6fd" />
+    </radialGradient>
+    <!-- Text gradient: Blue to Green -->
+    <linearGradient id="textGradientEcom" x1="40" y1="110" x2="80" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb" />
+      <stop offset="0.5" stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#22c55e" />
+    </linearGradient>
+    <!-- Shimmer gradient -->
+    <linearGradient id="shimmerGradientEcom" x1="30" y1="104" x2="90" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0" />
+      <stop offset="50%" stop-color="#fff" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+    <!-- Shadows -->
+    <filter id="sShadowEcom" x="0" y="0" width="120" height="120">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#22c55e" flood-opacity="0.18" />
+    </filter>
+    <filter id="dotShadowEcom" x="90" y="30" width="20" height="20">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#fde047" flood-opacity="0.18" />
+    </filter>
+    <filter id="sparkleShadowEcom" x="20" y="20" width="12" height="12">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#38bdf8" flood-opacity="0.18" />
+    </filter>
+    <filter id="textShadowEcom" x="40" y="100" width="40" height="20">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#2563eb" flood-opacity="0.18" />
+    </filter>
+    <filter id="orbShadowEcom" x="0" y="0" width="120" height="120">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#22c55e" flood-opacity="0.12" />
+    </filter>
+  </defs>
+</svg>

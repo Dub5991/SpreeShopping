@@ -1,0 +1,57 @@
+{
+  "name": "spree",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Welcome to **Spree** – a playful, modern e-commerce experience built with React, TypeScript, Vite, and a dash of animation magic!   Enjoy a gamified, visually engaging shopping spree with a vibrant UI and smooth interactions.",
+  "homepage": "https://github.com/Dub5991/SpreeShopping#readme",
+  "bugs": {
+    "url": "https://github.com/Dub5991/SpreeShopping/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dub5991/SpreeShopping.git"
+  },
+  "license": "ISC",
+  "author": "Dustin Snellings",
+  "type": "module",
+  "main": "eslint.config.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "@tanstack/react-query": "^5.77.2",
+    "animate.css": "^4.1.1",
+    "axios": "^1.9.0",
+    "bootstrap": "^5.3.6",
+    "clsx": "^2.1.1",
+    "firebase": "^11.8.1",
+    "framer-motion": "^12.15.0",
+    "react": "^19.1.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.6.1",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@types/react-redux": "^7.1.34",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5"
+  }
+}
