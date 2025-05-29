@@ -10,7 +10,7 @@ import clsx from "clsx";
 const accent = "#6366f1";
 
 const Login: React.FC = () => {
-  // State for login and reset forms, always initialized as string
+  // Always initialize as an empty string so that the values are never null
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [resetEmail, setResetEmail] = useState<string>("");
@@ -20,29 +20,35 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [resetLoading, setResetLoading] = useState<boolean>(false);
 
-  // Navigation and Redux dispatch
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Handle login form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
-      // Defensive: always pass a string
+      // Defensive: ensure we always have a string
       const safeEmail = email ?? "";
       const safePassword = password ?? "";
       const userCredential = await login(safeEmail, safePassword);
-      // Defensive: check userCredential exists
+
+      // Check if user exists and ensure the email is never null by providing a fallback.
       if (userCredential?.user) {
-        dispatch(setUser({ uid: userCredential.user.uid, email: userCredential.user.email }));
+        dispatch(
+          setUser({
+            uid: userCredential.user.uid,
+            email: userCredential.user.email ?? ""
+          })
+        );
       } else {
         setError("Login failed: user information not found.");
         setLoading(false);
         return;
       }
-      setError("");
+
+      // Redirect after successful login
       navigate("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -54,14 +60,13 @@ const Login: React.FC = () => {
     setLoading(false);
   };
 
-  // Handle password reset form submission
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetMsg("");
     setError("");
     setResetLoading(true);
     try {
-      // Defensive: always pass a string
+      // Ensure that we always pass a valid string by falling back to an empty string
       const safeResetEmail = resetEmail ?? "";
       const safeEmail = email ?? "";
       await sendPasswordReset(safeResetEmail || safeEmail);
@@ -91,7 +96,7 @@ const Login: React.FC = () => {
           width: "100%",
           borderRadius: "2rem",
           background: "linear-gradient(120deg, #f8fafc 70%, #e0e7ff 100%)",
-          boxShadow: "0 8px 32px rgba(99,102,241,0.10), 0 1.5px 8px rgba(30,41,59,0.08)",
+          boxShadow: "0 8px 32px rgba(99,102,241,0.10), 0 1.5px 8px rgba(30,41,59,0.08)"
         }}
       >
         <Card.Body>
@@ -100,7 +105,7 @@ const Login: React.FC = () => {
             style={{
               color: accent,
               letterSpacing: "-1px",
-              textShadow: "0 2px 8px #6366f122",
+              textShadow: "0 2px 8px #6366f122"
             }}
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -122,8 +127,8 @@ const Login: React.FC = () => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      value={email ?? ""}
-                      onChange={e => setEmail(e.target.value)}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                       placeholder="you@email.com"
                       style={{ borderRadius: "1em" }}
@@ -134,8 +139,8 @@ const Login: React.FC = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
-                      value={password ?? ""}
-                      onChange={e => setPassword(e.target.value)}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                       autoComplete="current-password"
                       placeholder="Your password"
@@ -150,14 +155,16 @@ const Login: React.FC = () => {
                       background: accent,
                       border: "none",
                       letterSpacing: "0.03em",
-                      fontSize: "1.1rem",
+                      fontSize: "1.1rem"
                     }}
                     disabled={loading}
                   >
                     {loading ? (
                       <span className="spinner-border spinner-border-sm me-2" />
                     ) : (
-                      <span role="img" aria-label="login">🔓</span>
+                      <span role="img" aria-label="login">
+                        🔓
+                      </span>
                     )}
                     Login
                   </Button>
@@ -188,8 +195,8 @@ const Login: React.FC = () => {
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={(resetEmail ?? "") || (email ?? "")}
-                        onChange={e => setResetEmail(e.target.value)}
+                        value={resetEmail || email}
+                        onChange={(e) => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
                         style={{ borderRadius: "1em" }}
@@ -205,14 +212,16 @@ const Login: React.FC = () => {
                       background: "#38bdf8",
                       border: "none",
                       letterSpacing: "0.03em",
-                      fontSize: "1.1rem",
+                      fontSize: "1.1rem"
                     }}
                     disabled={resetLoading}
                   >
                     {resetLoading ? (
                       <span className="spinner-border spinner-border-sm me-2" />
                     ) : (
-                      <span role="img" aria-label="reset">✉️</span>
+                      <span role="img" aria-label="reset">
+                        ✉️
+                      </span>
                     )}
                     Send Reset Email
                   </Button>
