@@ -1,13 +1,14 @@
+// ROUTE: /components/Products/ProductList (integration with Cart)
 // INTEGRATION TEST: Checks Cart updates when adding a product
-
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import ProductList from "../components/Products/ProductList";
 
 // Mock getProducts to return a single product
 jest.mock("../firebase/firestore", () => ({
   getProducts: () => ({
-    then: (cb: any) =>
+    then: cb =>
       cb({
         docs: [
           {
@@ -26,9 +27,14 @@ jest.mock("../firebase/firestore", () => ({
 }));
 
 test("adds product to cart and updates cart", async () => {
-  render(<ProductList />);
+  render(
+    <BrowserRouter>
+      <ProductList />
+    </BrowserRouter>
+  );
+  // Find the add button for the product
   const addButton = await screen.findByRole("button", { name: /add/i });
   fireEvent.click(addButton);
-  // Adjust the text below to match your cart update feedback
+  // Assert feedback toast appears
   expect(await screen.findByText(/added to cart/i)).toBeInTheDocument();
 });

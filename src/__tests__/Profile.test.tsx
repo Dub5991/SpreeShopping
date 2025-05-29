@@ -1,13 +1,15 @@
-// UNIT TEST: Checks Profile renders user info
-
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import Profile from "../components/User/Profile";
 import { Provider } from "react-redux";
-import { store } from "../redux/store";
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "../redux/userSlice";
 
-// Mock getUserDoc to return a user profile
-jest.mock("../../src/firebase/firestore", () => ({
+// Helper to flush pending promises (Jest/JSDOM safe)
+const flushPromises = () => new Promise(res => setTimeout(res, 0));
+
+// Mock getUserDoc as before
+jest.mock("../firebase/firestore", () => ({
   getUserDoc: () => ({
     exists: () => true,
     data: () => ({
@@ -16,16 +18,43 @@ jest.mock("../../src/firebase/firestore", () => ({
       phone: "1234567890",
       address: "123 Main St",
       avatarUrl: "",
+      createdAt: { toDate: () => new Date("2023-01-01") },
     }),
   }),
   updateUserProfile: jest.fn(),
 }));
 
 test("renders Profile with user info", async () => {
+  const mockStore = configureStore({
+    reducer: { user: userReducer },
+    preloadedState: {
+      user: {
+        user: {
+          uid: "abc123",
+          email: "test@example.com",
+          displayName: "Test User",
+          phone: "1234567890",
+          address: "123 Main St",
+          avatarUrl: "",
+        },
+        isAuthenticated: true,
+        status: "succeeded",
+        error: null,
+      },
+    },
+  });
+
   render(
-    <Provider store={store}>
+    <Provider store={mockStore}>
       <Profile />
     </Provider>
   );
-  expect(await screen.findByText(/test@example.com/i)).toBeInTheDocument();
+
+  // Wait for all promises (including useEffect) to resolve
+  await flushPromises();
+
+  // Wait for the email to appear
+  await waitFor(() =>
+    expect(screen.getByText(/test@example.com/i)).toBeInTheDocument()
+  );
 });

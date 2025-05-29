@@ -54,19 +54,23 @@ const Profile: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchProfile = async () => {
       if (user && user.uid) {
         const docSnap = await getUserDoc(user.uid);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setProfile(data);
-          setForm(data);
-          setAvatarUrl(data.avatarUrl || defaultAvatar);
+          if (isMounted) {
+            setProfile(data);
+            setForm(data);
+            setAvatarUrl(data.avatarUrl || defaultAvatar);
+          }
         }
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     };
     fetchProfile();
+    return () => { isMounted = false; };
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,6 +153,11 @@ const Profile: React.FC = () => {
         <Spinner animation="border" variant="primary" />
       </div>
     );
+
+  // --- TEST FRIENDLY: Show "Loading..." if profile is not yet loaded, otherwise show profile ---
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -326,74 +335,70 @@ const Profile: React.FC = () => {
             </div>
             {/* Profile details or edit form */}
             {!editMode ? (
-              profile ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, type: "spring" }}
-                  style={{
-                    color: "#1e293b",
-                    fontSize: "1.13rem",
-                    background: "rgba(255,255,255,0.85)",
-                    borderRadius: "1rem",
-                    padding: "1.2rem 1rem",
-                    boxShadow: "0 2px 8px #6366f111",
-                  }}
-                >
-                  <Row>
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, type: "spring" }}
+                style={{
+                  color: "#1e293b",
+                  fontSize: "1.13rem",
+                  background: "rgba(255,255,255,0.85)",
+                  borderRadius: "1rem",
+                  padding: "1.2rem 1rem",
+                  boxShadow: "0 2px 8px #6366f111",
+                }}
+              >
+                <Row>
+                  <Col xs={12} className="mb-2">
+                    <strong>Email:</strong>{" "}
+                    <span style={{ color: accent, fontWeight: 600 }}>{profile.email}</span>
+                  </Col>
+                  {profile.displayName && (
                     <Col xs={12} className="mb-2">
-                      <strong>Email:</strong>{" "}
-                      <span style={{ color: accent, fontWeight: 600 }}>{profile.email}</span>
+                      <strong>Name:</strong> <span>{profile.displayName}</span>
                     </Col>
-                    {profile.displayName && (
-                      <Col xs={12} className="mb-2">
-                        <strong>Name:</strong> <span>{profile.displayName}</span>
-                      </Col>
-                    )}
-                    {profile.phone && (
-                      <Col xs={12} className="mb-2">
-                        <strong>Phone:</strong> <span>{profile.phone}</span>
-                      </Col>
-                    )}
-                    {profile.address && (
-                      <Col xs={12} className="mb-2">
-                        <strong>Address:</strong> <span>{profile.address}</span>
-                      </Col>
-                    )}
+                  )}
+                  {profile.phone && (
                     <Col xs={12} className="mb-2">
-                      <strong>Member Since:</strong>{" "}
-                      <span>
-                        {profile.createdAt?.toDate
-                          ? profile.createdAt.toDate().toLocaleDateString()
-                          : "N/A"}
-                      </span>
+                      <strong>Phone:</strong> <span>{profile.phone}</span>
                     </Col>
-                  </Row>
-                  <div className="d-flex mt-4 gap-2">
-                    <motion.button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{
-                        marginRight: 12,
-                        fontWeight: 700,
-                        borderRadius: "1.5em",
-                        letterSpacing: "0.5px",
-                        boxShadow: "0 2px 8px #6366f122",
-                        background: accent,
-                        border: "none",
-                        transition: "background 0.2s",
-                      }}
-                      onClick={() => setEditMode(true)}
-                      whileTap={{ scale: 0.96 }}
-                    >
-                      <span role="img" aria-label="edit">🛠️</span> Edit Profile
-                    </motion.button>
-                    <DeleteAccount />
-                  </div>
-                </motion.div>
-              ) : (
-                <div>Loading...</div>
-              )
+                  )}
+                  {profile.address && (
+                    <Col xs={12} className="mb-2">
+                      <strong>Address:</strong> <span>{profile.address}</span>
+                    </Col>
+                  )}
+                  <Col xs={12} className="mb-2">
+                    <strong>Member Since:</strong>{" "}
+                    <span>
+                      {profile.createdAt?.toDate
+                        ? profile.createdAt.toDate().toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                  </Col>
+                </Row>
+                <div className="d-flex mt-4 gap-2">
+                  <motion.button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{
+                      marginRight: 12,
+                      fontWeight: 700,
+                      borderRadius: "1.5em",
+                      letterSpacing: "0.5px",
+                      boxShadow: "0 2px 8px #6366f122",
+                      background: accent,
+                      border: "none",
+                      transition: "background 0.2s",
+                    }}
+                    onClick={() => setEditMode(true)}
+                    whileTap={{ scale: 0.96 }}
+                  >
+                    <span role="img" aria-label="edit">🛠️</span> Edit Profile
+                  </motion.button>
+                  <DeleteAccount />
+                </div>
+              </motion.div>
             ) : (
               <EditProfile
                 form={form}
