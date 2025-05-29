@@ -55,6 +55,9 @@ const Login: React.FC = () => {
     setResetMsg("");
     setError("");
     setResetLoading(true);
+    try {
+      await sendPasswordReset(resetEmail || email || "");
+      setResetMsg("Password reset email sent! Check your inbox.");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -64,14 +67,9 @@ const Login: React.FC = () => {
     }
     setResetLoading(false);
   };
-      setError(err.message);
-    }
-    setResetLoading(false);
-  };
 
   return (
     <motion.div
-      // Animate the login card entrance
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, type: "spring" }}
@@ -89,7 +87,6 @@ const Login: React.FC = () => {
         }}
       >
         <Card.Body>
-          {/* Animated heading */}
           <motion.h2
             className="mb-4 fw-bold text-center"
             style={{
@@ -103,10 +100,8 @@ const Login: React.FC = () => {
           >
             Login to Spree
           </motion.h2>
-          {/* AnimatePresence handles login/reset form transitions */}
           <AnimatePresence>
             {!showReset ? (
-              // Login form
               <motion.div
                 key="login"
                 initial={{ opacity: 0, x: 40 }}
@@ -139,7 +134,6 @@ const Login: React.FC = () => {
                       style={{ borderRadius: "1em" }}
                     />
                   </Form.Group>
-                  {/* Login button with loading spinner */}
                   <Button
                     type="submit"
                     variant="primary"
@@ -159,7 +153,6 @@ const Login: React.FC = () => {
                     )}
                     Login
                   </Button>
-                  {/* Link to show password reset form */}
                   <div className="text-center mt-3">
                     <Button
                       variant="link"
@@ -174,7 +167,6 @@ const Login: React.FC = () => {
                 </Form>
               </motion.div>
             ) : (
-              // Password reset form
               <motion.div
                 key="reset"
                 initial={{ opacity: 0, x: 40 }}
@@ -188,7 +180,7 @@ const Login: React.FC = () => {
                     <InputGroup>
                       <Form.Control
                         type="email"
-                        value={resetEmail !== null && resetEmail !== undefined ? resetEmail : email !== null && email !== undefined ? email : ""}
+                        value={resetEmail || email || ""}
                         onChange={e => setResetEmail(e.target.value)}
                         required
                         placeholder="you@email.com"
@@ -197,7 +189,6 @@ const Login: React.FC = () => {
                       />
                     </InputGroup>
                   </Form.Group>
-                  {/* Reset button with loading spinner */}
                   <Button
                     type="submit"
                     variant="info"
@@ -217,7 +208,6 @@ const Login: React.FC = () => {
                     )}
                     Send Reset Email
                   </Button>
-                  {/* Link to go back to login form */}
                   <div className="text-center mt-3">
                     <Button
                       variant="link"
@@ -233,7 +223,6 @@ const Login: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          {/* Error and success messages */}
           {error && (
             <Alert variant="danger" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
               {error}
