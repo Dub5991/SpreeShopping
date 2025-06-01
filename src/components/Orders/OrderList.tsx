@@ -1,3 +1,5 @@
+// OrderList.tsx - Lists all orders for the current user
+
 import React, { useEffect, useState } from "react";
 import { getOrdersByUser } from "../../firebase/firestore";
 import { useSelector } from "react-redux";
@@ -6,26 +8,37 @@ import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootst
 import { useNavigate } from "react-router-dom";
 import AnimatedCard from "../AnimatedCard";
 
+// User and Order types
 type User = { uid: string };
 type Order = { id: string; [key: string]: any };
 
 const OrderList: React.FC = () => {
+  // Get current user from Redux store
   const user = useSelector((state: RootState) => state.user.user) as User | null;
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch orders for the user on mount or when user changes
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     getOrdersByUser(user.uid).then(snapshot => {
       setOrders(snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
     });
   }, [user]);
 
+  // Show loading spinner
   if (loading) return <Spinner animation="border" />;
+  // Show message if no orders
   if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
+  // Render orders table
   return (
     <Container>
       <Row>

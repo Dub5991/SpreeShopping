@@ -1,19 +1,18 @@
-// src/components/Orders/OrderDetail.tsx
+// OrderDetail.tsx - Shows details for a single order
+
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getOrder } from "../../firebase/firestore";
 import { Card, Table, Spinner, Button, Alert, Badge } from "react-bootstrap";
 import AnimatedCard from "../AnimatedCard";
 
-// Type for each item in the order
+// Types for order and items
 type OrderItem = {
   name: string;
   quantity: number;
   price: number;
   imageUrl?: string;
 };
-
-// Type for the order object
 type Order = {
   createdAt?: { toDate: () => Date };
   total?: number;
@@ -25,7 +24,7 @@ type Order = {
   };
 };
 
-// Mapping order status to Bootstrap badge variants
+// Status badge mapping
 const statusVariant: Record<string, string> = {
   pending: "warning",
   completed: "success",
@@ -34,15 +33,12 @@ const statusVariant: Record<string, string> = {
 };
 
 const OrderDetail: React.FC = () => {
-  // Get orderId from route params
   const { orderId } = useParams<{ orderId: string }>();
-  // State for order data, loading, and error
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Fetch order data when orderId changes
   useEffect(() => {
     if (!orderId) return;
     setLoading(true);
@@ -56,21 +52,18 @@ const OrderDetail: React.FC = () => {
       .finally(() => setLoading(false));
   }, [orderId]);
 
-  // Show loading spinner while fetching
   if (loading)
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: 200 }}>
         <Spinner animation="border" />
       </div>
     );
-  // Show error alert if fetch failed
   if (error)
     return (
       <Alert variant="danger" className="my-4 text-center">
         {error}
       </Alert>
     );
-  // Show warning if order not found
   if (!order)
     return (
       <Alert variant="warning" className="my-4 text-center">
@@ -78,12 +71,10 @@ const OrderDetail: React.FC = () => {
       </Alert>
     );
 
-  // Main order detail UI
   return (
     <AnimatedCard>
       <Card className="mx-auto shadow-sm" style={{ maxWidth: 540, width: "100%" }}>
         <Card.Body style={{ fontSize: "1rem" }}>
-          {/* Back button */}
           <Button
             variant="link"
             onClick={() => navigate(-1)}
@@ -93,7 +84,6 @@ const OrderDetail: React.FC = () => {
           >
             &larr; Back
           </Button>
-          {/* Order title and status badge */}
           <Card.Title className="mb-3" style={{ fontSize: "1.25rem" }}>
             Order Details
             {order.status && (
@@ -106,7 +96,6 @@ const OrderDetail: React.FC = () => {
               </Badge>
             )}
           </Card.Title>
-          {/* Order metadata */}
           <div className="mb-2">
             <strong>Order ID:</strong> <span className="text-muted">{orderId}</span>
           </div>
@@ -118,7 +107,6 @@ const OrderDetail: React.FC = () => {
             <strong>Total:</strong>{" "}
             <span className="fw-bold text-success">${order.total?.toFixed(2) ?? "0.00"}</span>
           </div>
-          {/* Customer info */}
           {order.customer && (
             <div className="mb-2">
               <strong>Customer:</strong> {order.customer.name || "N/A"}{" "}
@@ -127,7 +115,6 @@ const OrderDetail: React.FC = () => {
               </span>
             </div>
           )}
-          {/* Items table */}
           <h5 className="mt-4 mb-2" style={{ fontSize: "1.05rem" }}>
             Items
           </h5>
@@ -147,7 +134,6 @@ const OrderDetail: React.FC = () => {
                   order.items.map((item, idx) => (
                     <tr key={idx}>
                       <td>
-                        {/* Product image if available */}
                         {item.imageUrl ? (
                           <img
                             src={item.imageUrl}
