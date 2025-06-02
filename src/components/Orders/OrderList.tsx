@@ -1,5 +1,3 @@
-// OrderList.tsx - Lists all orders for the current user in real-time
-
 import React, { useEffect, useState } from "react";
 import { getOrdersByUserRealtime } from "../../firebase/firestore";
 import { useSelector } from "react-redux";
@@ -8,7 +6,6 @@ import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootst
 import { useNavigate } from "react-router-dom";
 import AnimatedCard from "../AnimatedCard";
 
-// User and Order types
 type User = { uid: string };
 type Order = { id: string; [key: string]: any };
 
@@ -19,7 +16,8 @@ const OrderList: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    // If user is not logged in, don't try to fetch orders
+    if (!user || !user.uid) {
       setOrders([]);
       setLoading(false);
       return;
@@ -44,7 +42,9 @@ const OrderList: React.FC = () => {
     };
   }, [user]);
 
-  if (!user) return <Alert variant="warning">Please log in to view your orders.</Alert>;
+  // Defensive: If user is not logged in, show message and don't spin
+  if (!user || !user.uid)
+    return <Alert variant="warning">Please log in to view your orders.</Alert>;
   if (loading) return <Spinner animation="border" />;
   if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
