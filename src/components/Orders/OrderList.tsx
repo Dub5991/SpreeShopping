@@ -1,7 +1,7 @@
-// OrderList.tsx - Lists all orders for the current user
+// OrderList.tsx - Lists all orders for the current user in real-time
 
 import React, { useEffect, useState } from "react";
-import { getOrdersByUser } from "../../firebase/firestore";
+import { getOrdersByUserRealtime } from "../../firebase/firestore";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootstrap";
@@ -13,13 +13,11 @@ type User = { uid: string };
 type Order = { id: string; [key: string]: any };
 
 const OrderList: React.FC = () => {
-  // Get current user from Redux store
   const user = useSelector((state: RootState) => state.user.user) as User | null;
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch orders for the user on mount or when user changes
   useEffect(() => {
     if (!user) {
       setOrders([]);
@@ -27,18 +25,17 @@ const OrderList: React.FC = () => {
       return;
     }
     setLoading(true);
-    getOrdersByUser(user.uid).then(snapshot => {
+    // Subscribe to real-time updates
+    const unsubscribe = getOrdersByUserRealtime(user.uid, (snapshot: any) => {
       setOrders(snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
     });
+    return () => unsubscribe && unsubscribe();
   }, [user]);
 
-  // Show loading spinner
   if (loading) return <Spinner animation="border" />;
-  // Show message if no orders
   if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
-  // Render orders table
   return (
     <Container>
       <Row>
@@ -54,18 +51,20 @@ const OrderList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {orders.map(order => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.createdAt?.toDate?.().toLocaleString?.() ?? "N/A"}</td>
-                    <td>{order.status ?? "N/A"}</td>
-                    <td>
-                      <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                {orders
+                  .sort((a, b) => (b.createdAt?.toDate?.() ?? 0) - (a.createdAt?.toDate?.() ?? 0))
+                  .map(order => (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{order.createdAt?.toDate?.().toLocaleString?.() ?? "N/A"}</td>
+                      <td>{order.status ?? "N/A"}</td>
+                      <td>
+                        <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           </AnimatedCard>

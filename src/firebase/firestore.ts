@@ -1,8 +1,9 @@
-// src/firebase/firestore.ts
+// src/firebase/firestore.ts - Firestore helpers for users, products, and orders
+
 import { db } from "./firebaseConfig";
 import {
   doc, setDoc, getDoc, updateDoc, deleteDoc,
-  collection, addDoc, getDocs, query, where, serverTimestamp
+  collection, addDoc, getDocs, query, where, serverTimestamp, orderBy, onSnapshot
 } from "firebase/firestore";
 
 // --- User CRUD ---
@@ -26,3 +27,22 @@ export const addOrder = (data: any) =>
 export const getOrdersByUser = (uid: string) =>
   getDocs(query(collection(db, "orders"), where("userId", "==", uid)));
 export const getOrder = (id: string) => getDoc(doc(db, "orders", id));
+
+// --- Real-time Order Listener ---
+/**
+ * Listen for real-time updates to a user's orders, sorted by most recent.
+ * @param uid User ID
+ * @param callback Function to call with Firestore snapshot
+ * @returns Unsubscribe function
+ */
+export function getOrdersByUserRealtime(
+  uid: string,
+  callback: (snapshot: any) => void
+) {
+  const q = query(
+    collection(db, "orders"),
+    where("userId", "==", uid),
+    orderBy("createdAt", "desc")
+  );
+  return onSnapshot(q, callback);
+}
