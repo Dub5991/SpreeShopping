@@ -25,14 +25,26 @@ const OrderList: React.FC = () => {
       return;
     }
     setLoading(true);
-    // Subscribe to real-time updates
+    // Subscribe to real-time updates for current user's orders
     const unsubscribe = getOrdersByUserRealtime(user.uid, (snapshot: any) => {
-      setOrders(snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })));
+      if (!snapshot || !snapshot.docs) {
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
+      const mapped = snapshot.docs.map((doc: any) => {
+        const data = doc.data ? doc.data() : {};
+        return { id: doc.id, ...data };
+      });
+      setOrders(mapped);
       setLoading(false);
     });
-    return () => unsubscribe && unsubscribe();
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
   }, [user]);
 
+  if (!user) return <Alert variant="warning">Please log in to view your orders.</Alert>;
   if (loading) return <Spinner animation="border" />;
   if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
@@ -51,20 +63,22 @@ const OrderList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {orders
-                  .sort((a, b) => (b.createdAt?.toDate?.() ?? 0) - (a.createdAt?.toDate?.() ?? 0))
-                  .map(order => (
-                    <tr key={order.id}>
-                      <td>{order.id}</td>
-                      <td>{order.createdAt?.toDate?.().toLocaleString?.() ?? "N/A"}</td>
-                      <td>{order.status ?? "N/A"}</td>
-                      <td>
-                        <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>
-                          View
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                {orders.map(order => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+                    <td>
+                      {order.createdAt?.toDate?.()
+                        ? order.createdAt.toDate().toLocaleString()
+                        : "N/A"}
+                    </td>
+                    <td>{order.status ?? "N/A"}</td>
+                    <td>
+                      <Button size="sm" onClick={() => navigate(`/orders/${order.id}`)}>
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           </AnimatedCard>

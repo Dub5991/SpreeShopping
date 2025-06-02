@@ -28,9 +28,9 @@ export const getOrdersByUser = (uid: string) =>
   getDocs(query(collection(db, "orders"), where("userId", "==", uid)));
 export const getOrder = (id: string) => getDoc(doc(db, "orders", id));
 
-// --- Real-time Order Listener ---
+// --- Real-time Order Listener for Current User ---
 /**
- * Listen for real-time updates to a user's orders, sorted by most recent.
+ * Listen for real-time updates to the current user's orders, sorted by most recent.
  * @param uid User ID
  * @param callback Function to call with Firestore snapshot
  * @returns Unsubscribe function
