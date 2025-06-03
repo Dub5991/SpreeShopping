@@ -1,9 +1,12 @@
-// Orders.tsx - Orders page that displays the user's orders
+// Orders page that displays the user's orders
 
 import React from "react";
 import OrderList from "../components/Orders/OrderList";
 
-// OrdersPage simply renders the OrderList component.
+/**
+ * OrdersPage
+ * Renders a heading and the OrderList component.
+ */
 const OrdersPage: React.FC = () => (
   <div>
     <h2 className="mb-4">Your Orders</h2>

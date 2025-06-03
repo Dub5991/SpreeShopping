@@ -6,17 +6,27 @@ import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootst
 import { useNavigate } from "react-router-dom";
 import AnimatedCard from "../AnimatedCard";
 
+// User and Order types for type safety
 type User = { uid: string };
 type Order = { id: string; [key: string]: any };
 
+/**
+ * OrderList component
+ * Displays all orders for the current user in real-time.
+ * Handles loading, empty, and unauthenticated states.
+ */
 const OrderList: React.FC = () => {
+  // Get current user from Redux store
   const user = useSelector((state: RootState) => state.user.user) as User | null;
+  // Orders state
   const [orders, setOrders] = useState<Order[]>([]);
+  // Loading state
   const [loading, setLoading] = useState(true);
+  // React Router navigation
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If user is not logged in, don't try to fetch orders
+    // If user is not logged in, clear orders and stop loading
     if (!user || !user.uid) {
       setOrders([]);
       setLoading(false);
@@ -25,11 +35,13 @@ const OrderList: React.FC = () => {
     setLoading(true);
     // Subscribe to real-time updates for current user's orders
     const unsubscribe = getOrdersByUserRealtime(user.uid, (snapshot: any) => {
+      // Defensive: handle empty or malformed snapshot
       if (!snapshot || !snapshot.docs) {
         setOrders([]);
         setLoading(false);
         return;
       }
+      // Map Firestore docs to order objects
       const mapped = snapshot.docs.map((doc: any) => {
         const data = doc.data ? doc.data() : {};
         return { id: doc.id, ...data };
@@ -37,17 +49,21 @@ const OrderList: React.FC = () => {
       setOrders(mapped);
       setLoading(false);
     });
+    // Cleanup subscription on unmount or user change
     return () => {
       if (typeof unsubscribe === "function") unsubscribe();
     };
   }, [user]);
 
-  // Defensive: If user is not logged in, show message and don't spin
+  // Show login warning if not authenticated
   if (!user || !user.uid)
     return <Alert variant="warning">Please log in to view your orders.</Alert>;
+  // Show spinner while loading
   if (loading) return <Spinner animation="border" />;
+  // Show info if no orders found
   if (!orders.length) return <Alert variant="info">No orders found.</Alert>;
 
+  // Render orders table
   return (
     <Container>
       <Row>

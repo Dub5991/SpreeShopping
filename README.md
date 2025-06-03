@@ -7,10 +7,20 @@
   <br/><br/>
   <b>Modern, animated, and gamified e-commerce built with React, TypeScript, Vite, and Firebase.</b>
   <br/><br/>
+  <a href="https://spree-shopping.vercel.app/" target="_blank"><img src="https://img.shields.io/badge/Live%20Demo-spree--shopping.vercel.app-6366F1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+  <br/><br/>
   <img src="https://user-images.githubusercontent.com/placeholder/spree-hero.png" alt="Spree Hero" width="80%" />
   <br/>
   <img src="https://user-images.githubusercontent.com/placeholder/spree-cart.png" alt="Spree Cart" width="80%" />
 </div>
+
+---
+
+## 📝 Overview
+
+**Spree Shopping** is a modern, animated, and gamified e-commerce platform. Shop smarter with a playful UI, earn rewards as you shop, and enjoy lightning-fast performance. Built with React 19, TypeScript, Vite, and Firebase, Spree offers a seamless shopping experience with secure authentication and robust state management.
+
+- **Live Site:** [https://spree-shopping.vercel.app/](https://spree-shopping.vercel.app/)
 
 ---
 
@@ -41,6 +51,16 @@ npm run dev
 # 3. Open your browser
 http://localhost:5173
 ```
+
+---
+
+## ⚙️ CI/CD
+
+This project uses [Vercel](https://vercel.com/) for continuous deployment:
+
+- **Automatic Deploys:** Every push to `main` triggers a build and deploy to [spree-shopping.vercel.app](https://spree-shopping.vercel.app/).
+- **Preview Deployments:** Pull requests generate preview URLs for testing changes before merging.
+- **Status Checks:** Build and deployment status are shown in GitHub pull requests.
 
 ---
 

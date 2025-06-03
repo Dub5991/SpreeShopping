@@ -24,7 +24,7 @@ type Order = {
   };
 };
 
-// Status badge mapping
+// Status badge mapping for order status
 const statusVariant: Record<string, string> = {
   pending: "warning",
   completed: "success",
@@ -32,9 +32,16 @@ const statusVariant: Record<string, string> = {
   shipped: "info",
 };
 
+/**
+ * OrderDetail component
+ * Shows all details for a single order, including items and customer info.
+ */
 const OrderDetail: React.FC = () => {
+  // Get orderId from URL params
   const { orderId } = useParams<{ orderId: string }>();
+  // Order state
   const [order, setOrder] = useState<Order | null>(null);
+  // Loading and error state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -43,6 +50,7 @@ const OrderDetail: React.FC = () => {
     if (!orderId) return;
     setLoading(true);
     setError(null);
+    // Fetch order from Firestore
     getOrder(orderId)
       .then(docSnap => {
         if (docSnap.exists()) setOrder(docSnap.data());
@@ -52,18 +60,21 @@ const OrderDetail: React.FC = () => {
       .finally(() => setLoading(false));
   }, [orderId]);
 
+  // Show spinner while loading
   if (loading)
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: 200 }}>
         <Spinner animation="border" />
       </div>
     );
+  // Show error if any
   if (error)
     return (
       <Alert variant="danger" className="my-4 text-center">
         {error}
       </Alert>
     );
+  // Show warning if order not found
   if (!order)
     return (
       <Alert variant="warning" className="my-4 text-center">
@@ -71,10 +82,12 @@ const OrderDetail: React.FC = () => {
       </Alert>
     );
 
+  // Render order details
   return (
     <AnimatedCard>
       <Card className="mx-auto shadow order-detail-card" style={{ maxWidth: 700, width: "100%", border: "none" }}>
         <Card.Body className="p-4">
+          {/* Back button and title */}
           <div className="d-flex align-items-center mb-4">
             <Button
               variant="outline-secondary"
@@ -105,6 +118,7 @@ const OrderDetail: React.FC = () => {
               )}
             </Card.Title>
           </div>
+          {/* Order info and customer info */}
           <Row className="mb-4">
             <Col xs={12} md={6} className="mb-2 mb-md-0">
               <div className="mb-2">
@@ -130,6 +144,7 @@ const OrderDetail: React.FC = () => {
               )}
             </Col>
           </Row>
+          {/* Items table */}
           <h5 className="mb-3" style={{ fontSize: "1.15rem", fontWeight: 600 }}>
             Items
           </h5>
