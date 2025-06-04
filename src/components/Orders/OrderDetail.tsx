@@ -156,7 +156,6 @@ const OrderDetail: React.FC = () => {
                   <th>Product</th>
                   <th>Qty</th>
                   <th>Price</th>
-                  <th>Subtotal</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,7 +197,6 @@ const OrderDetail: React.FC = () => {
                       <td style={{ fontWeight: 500 }}>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>${item.price?.toFixed(2)}</td>
-                      <td className="fw-bold">${(item.price * item.quantity).toFixed(2)}</td>
                     </tr>
                   ))
                 ) : (
