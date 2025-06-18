@@ -6,8 +6,6 @@
   <br/><br/>
   <b>Modern, animated, and gamified e-commerce built with React, TypeScript, Vite, and Firebase.</b>
   <br/><br/>
-  <
----
 
 ## 📝 Overview
 
