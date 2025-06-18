@@ -1,19 +1,12 @@
 # 🛍️ Spree Shopping
 
 <div align="center">
-  <img src="/SpreeLogo.svg" alt="Spree Logo" width="90" />
-  <br/><br/>
+ 
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=28&duration=2500&pause=800&color=6366F1&center=true&vCenter=true&width=500&lines=Shop+Smarter.+Shop+Spree!;Gamified+Rewards+%F0%9F%8E%81;Modern+UI+%F0%9F%92%BB;Lightning+Fast+%F0%9F%94%A5" alt="Typing SVG" />
   <br/><br/>
   <b>Modern, animated, and gamified e-commerce built with React, TypeScript, Vite, and Firebase.</b>
   <br/><br/>
-  <a href="https://spree-shopping.vercel.app/" target="_blank"><img src="https://img.shields.io/badge/Live%20Demo-spree--shopping.vercel.app-6366F1?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
-  <br/><br/>
-  <img src="https://user-images.githubusercontent.com/placeholder/spree-hero.png" alt="Spree Hero" width="80%" />
-  <br/>
-  <img src="https://user-images.githubusercontent.com/placeholder/spree-cart.png" alt="Spree Cart" width="80%" />
-</div>
-
+  <
 ---
 
 ## 📝 Overview
