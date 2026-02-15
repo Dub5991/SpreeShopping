@@ -3,12 +3,12 @@
 MCP Server Manager - Initialization and management for all MCP servers
 """
 
-from work_server import WorkServer
-from client_server import ClientServer
-from billing_server import BillingServer
-from llc_ops_server import LLCOpsServer
-from onboarding_server import OnboardingServer
-from career_server import CareerServer
+from .work_server import WorkServer
+from .client_server import ClientServer
+from .billing_server import BillingServer
+from .llc_ops_server import LLCOpsServer
+from .onboarding_server import OnboardingServer
+from .career_server import CareerServer
 
 
 class MCPServerManager:

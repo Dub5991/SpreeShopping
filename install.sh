@@ -56,27 +56,27 @@ echo ""
 echo "Initializing MCP Server databases..."
 
 echo "  • Work Server..."
-python3 core/mcp/work_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from work_server import WorkServer; WorkServer()" > /dev/null 2>&1
 echo "    ✓ work.db initialized"
 
 echo "  • Client Server..."
-python3 core/mcp/client_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from client_server import ClientServer; ClientServer()" > /dev/null 2>&1
 echo "    ✓ clients.db initialized"
 
 echo "  • Billing Server..."
-python3 core/mcp/billing_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from billing_server import BillingServer; BillingServer()" > /dev/null 2>&1
 echo "    ✓ billing.db initialized"
 
 echo "  • LLC Operations Server..."
-python3 core/mcp/llc_ops_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from llc_ops_server import LLCOpsServer; LLCOpsServer()" > /dev/null 2>&1
 echo "    ✓ llc_ops.db initialized"
 
 echo "  • Onboarding Server..."
-python3 core/mcp/onboarding_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from onboarding_server import OnboardingServer; OnboardingServer()" > /dev/null 2>&1
 echo "    ✓ onboarding.db initialized"
 
 echo "  • Career Server..."
-python3 core/mcp/career_server.py > /dev/null 2>&1
+python3 -c "import sys; sys.path.insert(0, 'core/mcp'); from career_server import CareerServer; CareerServer()" > /dev/null 2>&1
 echo "    ✓ career.db initialized"
 
 echo ""

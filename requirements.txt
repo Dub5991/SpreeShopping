@@ -90,8 +90,5 @@ jsonschema==4.19.0
 # Cryptography (for sensitive data)
 cryptography==41.0.3
 
-# File handling
-pathlib2==2.3.7.post1; python_version < '3.4'
-
 # Note: Some packages like sqlite3, json, datetime, pathlib are built into Python 3.8+
 # This file lists optional packages for enhanced functionality

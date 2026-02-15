@@ -68,7 +68,7 @@ Prepare my year-end tax summary with total income, total expenses, estimated tax
 - Business insurance
 
 ### Travel
-- Mileage (standard rate: $0.67/mile for 2024)
+- Mileage (standard rate: Check current IRS rate, was $0.67/mile in 2024)
 - Parking and tolls
 - Airfare and hotels for business travel
 - Meals (50% deductible)
