@@ -1,0 +1,94 @@
+# Python Requirements for AI-Powered Freelance LLC Operating System
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+sqlite3==3.41.2; sys_platform == 'linux'  # Database (built-in for Python 3.8+)
+
+# Date and time handling
+python-dateutil==2.8.2
+
+# Data processing
+pandas==2.0.3
+numpy==1.24.3
+
+# API and web framework (optional, for exposing MCP servers as APIs)
+flask==2.3.2
+flask-cors==4.0.0
+
+# Database ORM (optional, for advanced database operations)
+sqlalchemy==2.0.19
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Data validation
+pydantic==2.3.0
+
+# CLI tools
+click==8.1.6
+rich==13.5.2
+
+# Testing (optional)
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Code quality (optional)
+black==23.7.0
+flake8==6.1.0
+mypy==1.5.0
+
+# Documentation (optional)
+markdown==3.4.4
+
+# Stripe integration (optional, for payment processing)
+stripe==5.5.0
+
+# Email sending (optional)
+sendgrid==6.10.0
+
+# PDF generation (optional, for invoices)
+reportlab==4.0.4
+
+# Excel export (optional)
+openpyxl==3.1.2
+
+# Backup and compression
+python-magic==0.4.27
+
+# Logging
+loguru==0.7.0
+
+# Scheduling (optional, for automated tasks)
+schedule==1.2.0
+apscheduler==3.10.4
+
+# HTTP requests (optional, for API integrations)
+requests==2.31.0
+httpx==0.24.1
+
+# Data serialization
+ujson==5.8.0
+
+# Timezone support
+pytz==2023.3
+
+# UUID generation (built-in but listed for completeness)
+# uuid
+
+# Type hints support
+typing-extensions==4.7.1
+
+# Progress bars (for CLI)
+tqdm==4.66.1
+
+# Configuration management
+configparser==6.0.0
+
+# JSON schema validation
+jsonschema==4.19.0
+
+# Cryptography (for sensitive data)
+cryptography==46.0.5
+
+# Note: Some packages like sqlite3, json, datetime, pathlib are built into Python 3.8+
+# This file lists optional packages for enhanced functionality
