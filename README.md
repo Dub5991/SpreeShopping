@@ -97,11 +97,7 @@ This project uses [GitHub Actions](https://github.com/features/actions) for cont
 
 ## 🖼️ Screenshots
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/placeholder/spree-hero.png" alt="Spree Hero" width="80%" />
-  <br/>
-  <img src="https://user-images.githubusercontent.com/placeholder/spree-cart.png" alt="Spree Cart" width="80%" />
-</div>
+> Screenshots are available on the [live site](https://spree-shopping.vercel.app/).
 
 ---
 
@@ -151,15 +147,56 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 ## 🤝 Contributing
 
-Pull requests and suggestions are welcome!
+Contributions, bug reports, and feature requests are welcome! Please read the guidelines below before getting started.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m "feat: add my feature"`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a Pull Request — the CI pipeline will run automatically
+### How to Contribute
 
-Please ensure all tests pass (`npm test`) before submitting.
+1. **Fork** the repository on GitHub.
+2. **Clone** your fork locally:
+   ```bash
+   git clone https://github.com/<your-username>/SpreeShopping.git
+   cd SpreeShopping
+   ```
+3. **Install** dependencies:
+   ```bash
+   npm install
+   ```
+4. **Create a feature branch** from `main`:
+   ```bash
+   git checkout -b feature/my-feature
+   ```
+5. **Make your changes**, following the coding conventions below.
+6. **Run lint and tests** to ensure nothing is broken:
+   ```bash
+   npm run lint
+   npm test
+   ```
+7. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/):
+   ```bash
+   git commit -m "feat: add my feature"
+   ```
+8. **Push** to your fork and **open a Pull Request** against `main` — the CI pipeline will run automatically.
+
+### Coding Conventions
+
+- **TypeScript** — all new code must be fully typed; avoid `any`.
+- **Components** — use functional components with explicit `React.FC` types.
+- **State** — use Redux Toolkit slices for global state; keep local UI state in `useState`.
+- **Tests** — add or update Jest + React Testing Library tests for every change.
+- **CSS / Styling** — use Bootstrap utility classes and existing CSS custom properties; keep styles responsive.
+- **Commits** — follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, etc.).
+
+### Reporting Bugs
+
+Open an [issue](https://github.com/Dub5991/SpreeShopping/issues) and include:
+- A clear description of the problem.
+- Steps to reproduce.
+- Expected vs. actual behaviour.
+- Browser / Node.js version.
+
+### Suggesting Features
+
+Open an [issue](https://github.com/Dub5991/SpreeShopping/issues) tagged `enhancement` and describe the motivation and proposed solution.
 
 ---
 
