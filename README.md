@@ -1,11 +1,17 @@
 # 🛍️ Spree Shopping
 
 <div align="center">
- 
+
   <img src="https://readme-typing-svg.demolab.com?font=Montserrat&size=28&duration=2500&pause=800&color=6366F1&center=true&vCenter=true&width=500&lines=Shop+Smarter.+Shop+Spree!;Gamified+Rewards+%F0%9F%8E%81;Modern+UI+%F0%9F%92%BB;Lightning+Fast+%F0%9F%94%A5" alt="Typing SVG" />
   <br/><br/>
   <b>Modern, animated, and gamified e-commerce built with React, TypeScript, Vite, and Firebase.</b>
   <br/><br/>
+
+  ![CI/CD](https://github.com/Dub5991/SpreeShopping/actions/workflows/main.yml/badge.svg)
+  [![codecov](https://codecov.io/gh/Dub5991/SpreeShopping/branch/main/graph/badge.svg)](https://codecov.io/gh/Dub5991/SpreeShopping)
+  ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+</div>
 
 ## 📝 Overview
 
@@ -21,6 +27,7 @@
 - 🏆 **Gamified shopping** with XP, levels, and rewards
 - 🔒 **Secure authentication** (login, register, password reset)
 - 📱 **Responsive design** for all devices
+- ♿ **Accessible** — keyboard navigation with skip-to-content link and ARIA labels
 - ⚡ **Lightning-fast** with Vite and React 19
 - 🛒 **Product catalog, cart, and orders**
 - 🧩 **Redux Toolkit** for robust state management
@@ -45,13 +52,46 @@ http://localhost:5173
 
 ---
 
+## 🧪 Testing
+
+The project uses [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) for unit and integration tests.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm test -- --coverage
+```
+
+### Test coverage includes:
+- **Unit tests** — Redux slices (`productSlice`, `orderSlice`, `userSlice`)
+- **Component tests** — `SpreeLogo`, `ProductCategoryFilter`, `Profile`
+- **Integration tests** — Cart flow, `ProductList` rendering & add-to-cart behaviour
+
+Coverage reports are uploaded to [Codecov](https://codecov.io/gh/Dub5991/SpreeShopping) on every CI run.
+
+---
+
 ## ⚙️ CI/CD
 
-This project uses [Vercel](https://vercel.com/) for continuous deployment:
+This project uses [GitHub Actions](https://github.com/features/actions) for continuous integration and [Vercel](https://vercel.com/) for continuous deployment.
 
-- **Automatic Deploys:** Every push to `main` triggers a build and deploy to [spree-shopping.vercel.app](https://spree-shopping.vercel.app/).
-- **Preview Deployments:** Pull requests generate preview URLs for testing changes before merging.
-- **Status Checks:** Build and deployment status are shown in GitHub pull requests.
+### Workflow: `build-and-test` → `deploy`
+
+| Step | Description |
+|------|-------------|
+| Checkout | Fetch latest code |
+| Setup Node.js 20 | With npm dependency caching |
+| Install dependencies | `npm ci` |
+| Lint | `npm run lint` (ESLint) |
+| Test with coverage | `npm test -- --coverage` |
+| Upload coverage | Codecov integration |
+| Deploy (main branch only) | Vercel production deployment |
+
+- **Triggers:** Push to `main`/`master` and all pull requests.
+- **Caching:** npm dependencies are cached between runs for faster builds.
+- **Preview Deployments:** Pull requests generate preview URLs on Vercel.
 
 ---
 
@@ -67,68 +107,59 @@ This project uses [Vercel](https://vercel.com/) for continuous deployment:
 
 ## 🧩 Tech Stack
 
-| Technology         | Purpose                        |
-|--------------------|-------------------------------|
-| [React 19](https://react.dev/)           | UI library                     |
-| [TypeScript](https://www.typescriptlang.org/)      | Type safety                    |
-| [Vite](https://vitejs.dev/)              | Fast dev/build tool             |
-| [Redux Toolkit](https://redux-toolkit.js.org/)     | State management               |
-| [Firebase](https://firebase.google.com/)           | Auth & database                |
-| [React Bootstrap](https://react-bootstrap.github.io/)| UI components                |
-| [Framer Motion](https://www.framer.com/motion/)    | Animations & transitions       |
+| Technology | Purpose |
+|---|---|
+| [React 19](https://react.dev/) | UI library |
+| [TypeScript](https://www.typescriptlang.org/) | Type safety |
+| [Vite](https://vitejs.dev/) | Fast dev/build tool |
+| [Redux Toolkit](https://redux-toolkit.js.org/) | State management |
+| [Firebase](https://firebase.google.com/) | Auth & database |
+| [React Bootstrap](https://react-bootstrap.github.io/) | UI components |
+| [Framer Motion](https://www.framer.com/motion/) | Animations & transitions |
+| [Jest](https://jestjs.io/) + [RTL](https://testing-library.com/) | Testing |
+| [Codecov](https://codecov.io/) | Coverage reporting |
 
 ---
 
-## 🎨 Design & Animation
+## 🎨 Design & Accessibility
 
-- **Animated Spree Logo**  
-  <img src="/SpreeLogo.svg" alt="Spree Logo" width="80" />
-
-- **Background Orbs & Waves**  
-  Subtle, animated SVG and CSS backgrounds for a lively, modern feel.
-
-- **Motion Transitions**  
-  Page and component transitions powered by Framer Motion.
-
-- **Gamified UI**  
-  Earn XP and level up as you shop!
+- **Animated Spree Logo** with custom SVG branding
+- **Background Orbs & Waves** — subtle, animated SVG and CSS backgrounds
+- **Motion Transitions** — page and component transitions via Framer Motion
+- **Skip-to-content link** — improves keyboard and screen-reader navigation
+- **ARIA labels** — all interactive and decorative elements labelled
 
 ---
 
 ## 🛠️ Development
 
-### Linting & Formatting
+### Linting
 
 ```bash
 npm run lint
-npm run format
 ```
 
-### ESLint (with React & TypeScript)
+### ESLint (React & TypeScript)
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 ```
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests and suggestions are welcome!  
-Please open an issue or submit a PR.
+Pull requests and suggestions are welcome!
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m "feat: add my feature"`
+4. Push to the branch: `git push origin feature/my-feature`
+5. Open a Pull Request — the CI pipeline will run automatically
+
+Please ensure all tests pass (`npm test`) before submitting.
 
 ---
 
@@ -142,3 +173,4 @@ MIT
   <img src="/SpreeLogo.svg" alt="Spree Logo" width="60" /><br/>
   <b>Happy Spree Shopping!</b>
 </div>
+

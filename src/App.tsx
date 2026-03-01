@@ -39,6 +39,14 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      {/* Skip-to-content link for keyboard/screen reader accessibility */}
+      <a
+        href="#main-content"
+        className="visually-hidden-focusable position-absolute top-0 start-0 p-2 bg-white text-primary fw-bold"
+        style={{ zIndex: 9999 }}
+      >
+        Skip to main content
+      </a>
       {/* Toast always fixed at top of viewport */}
       <ToastContainer
         position="top-center"
@@ -138,7 +146,7 @@ const App: React.FC = () => {
         </Container>
       </Navbar>
       {/* Main content area with animated route transitions */}
-      <Container className="mt-4" style={{ position: "relative", zIndex: 2 }}>
+      <Container id="main-content" as="main" className="mt-4" style={{ position: "relative", zIndex: 2 }}>
         <AnimatePresence mode="wait">
           <Routes>
             {/* Each route is wrapped in a motion.div for fade transitions */}

@@ -3,53 +3,53 @@ name: React CI/CD
 on:
   push:
     branches: [main, master]
+  pull_request:
+    branches: [main, master]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Print debugging information
-        run: |
-          echo "Node Version: $(node --version)"
-          echo "NPM Version: $(npm --version)"
-          echo "Working Directory: $(pwd)"
-          echo "Contents of Working Directory: $(ls -l)"
-          echo "Contents of node_modules: $(ls -l node_modules)"
+      - name: Lint
+        run: npm run lint
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests with coverage
+        run: npm test -- --coverage
 
-      - name: Check test results
-        if: failure()
-        run: |
-          echo "❌ Tests failed. Stopping pipeline."
-          exit 1
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
   deploy:
     needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
