@@ -15,6 +15,18 @@ const emptyProduct = {
   category: ""
 };
 
+type ProductForm = typeof emptyProduct;
+type Product = { id: string; name: string; description: string; price: number; stock: number; imageUrl?: string; category: string };
+
+const productToForm = (product: Product): ProductForm => ({
+  name: product.name,
+  description: product.description,
+  price: String(product.price),
+  stock: String(product.stock),
+  imageUrl: product.imageUrl ?? "",
+  category: product.category,
+});
+
 interface ProductManagerProps {
   adminMode: boolean;
   category?: string | null;
@@ -28,17 +40,17 @@ const getAccent = (idx: number) => accentColors[idx % accentColors.length];
 
 const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = null }) => {
   // State for products, loading, modal, editing, and form data
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState<any>(emptyProduct);
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [form, setForm] = useState<ProductForm>(emptyProduct);
 
   // Fetch products from Firestore and update state
   const fetchProducts = async () => {
     setLoading(true);
     const snapshot = await getProducts();
-    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[]);
     setLoading(false);
   };
 
@@ -48,9 +60,9 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
   }, []);
 
   // Open modal for add/edit product
-  const openModal = (product?: any) => {
+  const openModal = (product?: Product) => {
     setEditing(product || null);
-    setForm(product ? { ...product } : emptyProduct);
+    setForm(product ? productToForm(product) : emptyProduct);
     setShowModal(true);
   };
 
