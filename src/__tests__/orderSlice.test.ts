@@ -20,7 +20,7 @@ describe("orderSlice", () => {
 
   it("clearOrders resets orders to empty array", () => {
     const populated = { orders: [{ id: "o1", userId: "u1", total: 29.99, items: [] }] };
-    const state = orderReducer(populated as any, clearOrders());
+    const state = orderReducer(populated as unknown as ReturnType<typeof orderReducer>, clearOrders());
     expect(state.orders).toEqual([]);
   });
 });

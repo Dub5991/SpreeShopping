@@ -20,7 +20,7 @@ describe("productSlice", () => {
 
   it("clearProducts resets items to empty array", () => {
     const populated = { items: [{ id: "p1", name: "Widget", price: 9.99, stock: 10, category: "Misc" }] };
-    const state = productReducer(populated as any, clearProducts());
+    const state = productReducer(populated as unknown as ReturnType<typeof productReducer>, clearProducts());
     expect(state.items).toEqual([]);
   });
 });

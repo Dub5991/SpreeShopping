@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -15,9 +14,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaBoxOpen, FaCartPlus, FaEye, FaExclamationTriangle } from "react-icons/fa";
 import clsx from "clsx";
 
+type CartItem = { id: string; name: string; price: number; stock: number; quantity: number };
+type Product = { id: string; name: string; description?: string; price: number; stock: number; imageUrl?: string; category: string };
+
 // --- Cart helpers ---
-const getCart = () => JSON.parse(localStorage.getItem("cart") || "[]");
-const setCart = (cart: any[]) => localStorage.setItem("cart", JSON.stringify(cart));
+const getCart = (): CartItem[] => JSON.parse(localStorage.getItem("cart") || "[]");
+const setCart = (cart: CartItem[]) => localStorage.setItem("cart", JSON.stringify(cart));
 
 // --- Accent color palette ---
 const accentColors = [
@@ -43,23 +45,23 @@ const cardVariants = {
 };
 
 const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     getProducts().then((snapshot) => {
-      const prods = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const prods = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[];
       setProducts(prods);
       setQuantities(Object.fromEntries(prods.map((p) => [p.id, 1])));
       setLoading(false);
     });
   }, []);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     const cart = getCart();
-    const existing = cart.find((item: any) => item.id === product.id);
+    const existing = cart.find((item: CartItem) => item.id === product.id);
     const qty = quantities[product.id] || 1;
     if (existing) {
       existing.quantity += qty;

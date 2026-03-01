@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -19,7 +18,7 @@ import {
 } from "react-bootstrap";
 import AnimatedCard from "../AnimatedCard";
 import DeleteAccount from "./DeleteAccount";
-import EditProfile from "./EditProfile";
+import EditProfile, { type ProfileData } from "./EditProfile";
 import { motion, AnimatePresence } from "framer-motion";
 
 const defaultAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=spree";
@@ -27,7 +26,7 @@ const accent = "#6366f1";
 const gold = "#fbbf24";
 
 // Calculate gamified XP and level based on profile completeness
-const gamifyLevel = (profile: any) => {
+const gamifyLevel = (profile: ProfileData | null) => {
   let xp = 0;
   if (profile?.displayName) xp += 25;
   if (profile?.phone) xp += 25;
@@ -37,14 +36,14 @@ const gamifyLevel = (profile: any) => {
   return { xp, level };
 };
 
-type User = { uid: string; [key: string]: any };
+type User = { uid: string; [key: string]: unknown };
 
 const Profile: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user) as User | null;
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState<any>({});
+  const [form, setForm] = useState<ProfileData>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -85,7 +84,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const uploadAvatar = async () => {
+  const uploadAvatar = async (): Promise<string> => {
     setAvatarUploading(true);
     await new Promise(res => setTimeout(res, 1200));
     setAvatarUploading(false);
