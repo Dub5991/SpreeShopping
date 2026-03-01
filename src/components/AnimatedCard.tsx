@@ -7,7 +7,7 @@ type AnimatedCardProps = React.PropsWithChildren<{
   style?: React.CSSProperties;
   animationDuration?: number;
   tabIndex?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }>;
 
 const cardVariants = {

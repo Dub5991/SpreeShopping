@@ -5,10 +5,11 @@ import type { RootState } from "../../redux/store";
 import { Table, Spinner, Button, Alert, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AnimatedCard from "../AnimatedCard";
+import type { QuerySnapshot, DocumentData } from "firebase/firestore";
 
 // User and Order types for type safety
 type User = { uid: string };
-type Order = { id: string; [key: string]: any };
+type Order = { id: string; [key: string]: unknown };
 
 /**
  * OrderList component
@@ -34,7 +35,7 @@ const OrderList: React.FC = () => {
     }
     setLoading(true);
     // Subscribe to real-time updates for current user's orders
-    const unsubscribe = getOrdersByUserRealtime(user.uid, (snapshot: any) => {
+    const unsubscribe = getOrdersByUserRealtime(user.uid, (snapshot: QuerySnapshot<DocumentData>) => {
       // Defensive: handle empty or malformed snapshot
       if (!snapshot || !snapshot.docs) {
         setOrders([]);
@@ -42,7 +43,7 @@ const OrderList: React.FC = () => {
         return;
       }
       // Map Firestore docs to order objects
-      const mapped = snapshot.docs.map((doc: any) => {
+      const mapped = snapshot.docs.map((doc) => {
         const data = doc.data ? doc.data() : {};
         return { id: doc.id, ...data };
       });

@@ -20,7 +20,7 @@ const ProductCategoryFilter: React.FC<{
     getProducts().then(snapshot => {
       const prods = snapshot.docs.map(doc => doc.data());
       // Get unique, non-empty categories
-      const unique = Array.from(new Set(prods.map((p: any) => p.category).filter(Boolean)));
+      const unique = Array.from(new Set(prods.map((p: { category?: unknown }) => p.category).filter((c): c is string => typeof c === "string" && c.length > 0)));
       setCategories(unique);
     });
   }, []);

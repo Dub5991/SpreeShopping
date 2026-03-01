@@ -3,7 +3,6 @@
  * Verifies that products fetched from Firestore are rendered,
  * that category filtering works, and that adding to cart dispatches the event.
  */
-// @ts-ignore
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
