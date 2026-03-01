@@ -3,9 +3,12 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
+type Order = { id: string; [key: string]: unknown };
+type OrderState = { orders: Order[] };
+
 const orderSlice = createSlice({
   name: "orders",
-  initialState: { orders: [] },
+  initialState: { orders: [] } as OrderState,
   reducers: {
     setOrders(state, action) {
       state.orders = action.payload;

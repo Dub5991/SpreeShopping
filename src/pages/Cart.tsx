@@ -19,7 +19,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // --- Types ---
 type CartItem = { id: string; name: string; price: number; quantity: number; stock: number };
 type Product = { id: string; name: string; price: number; stock: number };
-type User = { uid: string; [key: string]: any };
+type User = { uid: string; [key: string]: unknown };
 
 // --- Cart helpers ---
 const getCart = (): CartItem[] => JSON.parse(localStorage.getItem("cart") || "[]");
@@ -104,7 +104,7 @@ const CartPage: React.FC = () => {
     setCheckoutLoading(true);
     // Check stock before placing order
     const productsSnap = await getProducts();
-    const products: Product[] = productsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    const products: Product[] = productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Product));
     for (const item of cart) {
       const prod = products.find((p: Product) => p.id === item.id);
       if (!prod || prod.stock < item.quantity) {

@@ -25,8 +25,11 @@ const defaultAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=spree";
 const accent = "#6366f1";
 const gold = "#fbbf24";
 
+type UserProfile = { email?: string; displayName?: string; phone?: string; address?: string; avatarUrl?: string; createdAt?: { toDate: () => Date } };
+type ProfileForm = { displayName?: string; phone?: string; address?: string; avatarUrl?: string; [key: string]: unknown };
+
 // Calculate gamified XP and level based on profile completeness
-const gamifyLevel = (profile: any) => {
+const gamifyLevel = (profile: UserProfile) => {
   let xp = 0;
   if (profile?.displayName) xp += 25;
   if (profile?.phone) xp += 25;
@@ -36,14 +39,14 @@ const gamifyLevel = (profile: any) => {
   return { xp, level };
 };
 
-type User = { uid: string; [key: string]: any };
+type User = { uid: string; [key: string]: unknown };
 
 const Profile: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user) as User | null;
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState<any>({});
+  const [form, setForm] = useState<ProfileForm>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -84,7 +87,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const uploadAvatar = async (_file: File) => {
+  const uploadAvatar = async () => {
     setAvatarUploading(true);
     await new Promise(res => setTimeout(res, 1200));
     setAvatarUploading(false);
@@ -99,7 +102,7 @@ const Profile: React.FC = () => {
     let avatarDownloadUrl = avatarUrl;
     try {
       if (avatarFile) {
-        avatarDownloadUrl = await uploadAvatar(avatarFile);
+        avatarDownloadUrl = await uploadAvatar();
       }
       if (!user) throw new Error("User not found");
       await updateUserProfile(user.uid, {
@@ -113,7 +116,7 @@ const Profile: React.FC = () => {
       setSuccessMsg("Profile updated successfully!");
       setShowToast(true);
       setAvatarFile(null);
-    } catch (err: any) {
+    } catch {
       setError("Failed to update profile. Please try again.");
     }
     setSaving(false);

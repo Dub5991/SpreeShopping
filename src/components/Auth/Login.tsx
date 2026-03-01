@@ -45,8 +45,8 @@ const Login: React.FC = () => {
             uid: userCredential.user.uid ?? "",
             email: userCredential.user.email ?? "",
             displayName: userCredential.user.displayName ?? "",
-            phone: (userCredential.user as any).phone ?? "",
-            address: (userCredential.user as any).address ?? "",
+            phone: (userCredential.user as unknown as { phone?: string }).phone ?? "",
+            address: (userCredential.user as unknown as { address?: string }).address ?? "",
             avatarUrl: userCredential.user.photoURL ?? ""
           })
         );

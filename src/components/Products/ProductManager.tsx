@@ -15,6 +15,10 @@ const emptyProduct = {
   category: ""
 };
 
+// Product types
+type Product = { id: string; name: string; description?: string; price: number; stock: number; imageUrl?: string; category: string };
+type ProductForm = { name: string; description: string; price: string; stock: string; imageUrl: string; category: string };
+
 interface ProductManagerProps {
   adminMode: boolean;
   category?: string | null;
@@ -26,13 +30,22 @@ const accentColors = [
 ];
 const getAccent = (idx: number) => accentColors[idx % accentColors.length];
 
+const productToForm = (product: Product): ProductForm => ({
+  name: product.name,
+  description: product.description || "",
+  price: String(product.price),
+  stock: String(product.stock),
+  imageUrl: product.imageUrl || "",
+  category: product.category,
+});
+
 const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = null }) => {
   // State for products, loading, modal, editing, and form data
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState<any>(emptyProduct);
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [form, setForm] = useState<ProductForm>(emptyProduct);
 
   // Fetch products from Firestore and update state
   const fetchProducts = async () => {
@@ -48,9 +61,9 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
   }, []);
 
   // Open modal for add/edit product
-  const openModal = (product?: any) => {
+  const openModal = (product?: Product) => {
     setEditing(product || null);
-    setForm(product ? { ...product } : emptyProduct);
+    setForm(product ? productToForm(product) : emptyProduct);
     setShowModal(true);
   };
 

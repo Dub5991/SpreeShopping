@@ -14,7 +14,8 @@ const ProductDetail: React.FC = () => {
   // Get productId from route params
   const { productId } = useParams<{ productId: string }>();
   // State for product data and loading indicator
-  const [product, setProduct] = useState<any>(null);
+  type Product = { id: string; name: string; price: number; stock: number; imageUrl?: string; category: string; description?: string };
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
