@@ -3,7 +3,7 @@
  * Ensures that adding a product updates the cart UI and localStorage.
  */
 
-// @ts-ignore
+// @ts-expect-error React is used by JSX transform
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CartPage from "../pages/Cart";

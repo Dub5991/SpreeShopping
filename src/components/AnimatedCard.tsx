@@ -1,14 +1,10 @@
 import React, { useEffect, useMemo, forwardRef } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion, HTMLMotionProps, useAnimation } from "framer-motion";
 import clsx from "clsx";
 
-type AnimatedCardProps = React.PropsWithChildren<{
-  className?: string;
-  style?: React.CSSProperties;
+type AnimatedCardProps = HTMLMotionProps<"div"> & {
   animationDuration?: number;
-  tabIndex?: number;
-  [key: string]: any;
-}>;
+};
 
 const cardVariants = {
   initial: { opacity: 0, y: 32, scale: 0.97 },

@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error React is used by JSX transform
 import React from "react";
 import { render } from "@testing-library/react";
 import SpreeLogo from "../components/SpreeLogo";

@@ -20,6 +20,9 @@ interface ProductManagerProps {
   category?: string | null;
 }
 
+type ProductData = { id: string; name: string; description: string; price: number; stock: number; imageUrl: string; category: string };
+type ProductForm = { name: string; description: string; price: string | number; stock: string | number; imageUrl: string; category: string };
+
 // Accent colors for product cards
 const accentColors = [
   "#0ea5e9", "#a21caf", "#f59e42", "#16a34a", "#eab308", "#ef4444"
@@ -28,17 +31,17 @@ const getAccent = (idx: number) => accentColors[idx % accentColors.length];
 
 const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = null }) => {
   // State for products, loading, modal, editing, and form data
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState<any>(emptyProduct);
+  const [editing, setEditing] = useState<ProductData | null>(null);
+  const [form, setForm] = useState<ProductForm>(emptyProduct);
 
   // Fetch products from Firestore and update state
   const fetchProducts = async () => {
     setLoading(true);
     const snapshot = await getProducts();
-    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProductData)));
     setLoading(false);
   };
 
@@ -48,7 +51,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
   }, []);
 
   // Open modal for add/edit product
-  const openModal = (product?: any) => {
+  const openModal = (product?: ProductData) => {
     setEditing(product || null);
     setForm(product ? { ...product } : emptyProduct);
     setShowModal(true);
@@ -65,8 +68,8 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
     const productData = {
       name: form.name,
       description: form.description,
-      price: parseFloat(form.price),
-      stock: parseInt(form.stock),
+      price: parseFloat(String(form.price)),
+      stock: parseInt(String(form.stock)),
       imageUrl: form.imageUrl,
       category: form.category
     };

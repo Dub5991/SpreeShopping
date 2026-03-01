@@ -15,8 +15,10 @@ import { FaBoxOpen, FaCartPlus, FaEye, FaExclamationTriangle } from "react-icons
 import clsx from "clsx";
 
 // --- Cart helpers ---
-const getCart = () => JSON.parse(localStorage.getItem("cart") || "[]");
-const setCart = (cart: any[]) => localStorage.setItem("cart", JSON.stringify(cart));
+type CartItem = { id: string; name: string; price: number; quantity: number; stock: number };
+type Product = { id: string; name: string; price: number; stock: number; description?: string; category?: string; imageUrl?: string };
+const getCart = (): CartItem[] => JSON.parse(localStorage.getItem("cart") || "[]");
+const setCart = (cart: CartItem[]) => localStorage.setItem("cart", JSON.stringify(cart));
 
 // --- Accent color palette ---
 const accentColors = [
@@ -42,23 +44,23 @@ const cardVariants = {
 };
 
 const ProductList: React.FC<ProductListProps> = ({ category = null }) => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     getProducts().then((snapshot) => {
-      const prods = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const prods = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Product));
       setProducts(prods);
       setQuantities(Object.fromEntries(prods.map((p) => [p.id, 1])));
       setLoading(false);
     });
   }, []);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     const cart = getCart();
-    const existing = cart.find((item: any) => item.id === product.id);
+    const existing = cart.find((item) => item.id === product.id);
     const qty = quantities[product.id] || 1;
     if (existing) {
       existing.quantity += qty;
