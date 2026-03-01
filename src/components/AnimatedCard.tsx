@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, forwardRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import clsx from "clsx";

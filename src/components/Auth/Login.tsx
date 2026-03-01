@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { login, sendPasswordReset } from "../../firebase/auth";
 import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";

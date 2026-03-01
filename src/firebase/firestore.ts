@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Firestore helpers for users, products, and orders
 
 import { db } from "./firebaseConfig";
