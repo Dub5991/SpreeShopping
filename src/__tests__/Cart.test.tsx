@@ -3,7 +3,6 @@
  * Ensures that adding a product updates the cart UI and localStorage.
  */
 
-// @ts-ignore
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CartPage from "../pages/Cart";

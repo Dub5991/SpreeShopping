@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
@@ -84,7 +85,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const uploadAvatar = async (_file: File) => {
+  const uploadAvatar = async () => {
     setAvatarUploading(true);
     await new Promise(res => setTimeout(res, 1200));
     setAvatarUploading(false);
@@ -99,7 +100,7 @@ const Profile: React.FC = () => {
     let avatarDownloadUrl = avatarUrl;
     try {
       if (avatarFile) {
-        avatarDownloadUrl = await uploadAvatar(avatarFile);
+        avatarDownloadUrl = await uploadAvatar();
       }
       if (!user) throw new Error("User not found");
       await updateUserProfile(user.uid, {
@@ -113,7 +114,7 @@ const Profile: React.FC = () => {
       setSuccessMsg("Profile updated successfully!");
       setShowToast(true);
       setAvatarFile(null);
-    } catch (err: any) {
+    } catch {
       setError("Failed to update profile. Please try again.");
     }
     setSaving(false);
