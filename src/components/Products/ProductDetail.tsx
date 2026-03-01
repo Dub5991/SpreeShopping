@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProducts } from "../../firebase/firestore";
@@ -11,11 +10,13 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+type Product = { id: string; name: string; description?: string; price: number; stock: number; imageUrl?: string; category: string };
+
 const ProductDetail: React.FC = () => {
   // Get productId from route params
   const { productId } = useParams<{ productId: string }>();
   // State for product data and loading indicator
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -24,7 +25,7 @@ const ProductDetail: React.FC = () => {
     getProducts().then(snapshot => {
       // Find the product with the matching ID
       const found = snapshot.docs.find(doc => doc.id === productId);
-      setProduct(found ? { id: found.id, ...found.data() } : null);
+      setProduct(found ? { id: found.id, ...found.data() } as Product : null);
       setLoading(false);
     });
   }, [productId]);

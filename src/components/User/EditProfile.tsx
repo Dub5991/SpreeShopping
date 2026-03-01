@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Form, Spinner } from "react-bootstrap";
 import { motion } from "framer-motion";
@@ -6,9 +5,18 @@ import { motion } from "framer-motion";
 const success = "#10b981";
 const defaultAvatar = "https://api.dicebear.com/7.x/identicon/svg?seed=spree";
 
+export type ProfileData = {
+  displayName?: string;
+  phone?: string;
+  address?: string;
+  avatarUrl?: string;
+  email?: string;
+  createdAt?: { toDate?: () => Date };
+};
+
 interface EditProfileProps {
-  form: any;
-  setForm: (form: any) => void;
+  form: ProfileData;
+  setForm: (form: ProfileData) => void;
   avatarUploading: boolean;
   saving: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -16,7 +24,7 @@ interface EditProfileProps {
   setEditMode: (edit: boolean) => void;
   setAvatarUrl: (url: string) => void;
   setAvatarFile: (file: File | null) => void;
-  profile: any;
+  profile: ProfileData;
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({
