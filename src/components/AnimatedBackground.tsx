@@ -1,6 +1,6 @@
 // src/components/AnimatedBackground.tsx
 // Enhanced animated background with more shapes, parallax, and subtle effects
-
+// This component creates a dynamic, visually appealing background using Framer Motion for animations
 import React from "react";
 import { motion } from "framer-motion";
 
