@@ -22,6 +22,9 @@ const friendlyError = (err: unknown): string => {
     "auth/too-many-requests":      "Too many attempts. Please try again later.",
     "auth/network-request-failed": "Network error. Please check your connection.",
     "auth/user-disabled":          "This account has been disabled.",
+    "auth/unauthorized-domain":    "Login is not allowed from this domain. Please contact support.",
+    "auth/invalid-api-key":        "Firebase configuration error. Please contact support.",
+    "auth/app-not-authorized":     "This app is not authorized to use Firebase Authentication.",
   };
   return map[code] ?? "Something went wrong. Please try again.";
 };
