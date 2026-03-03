@@ -17,6 +17,7 @@ const mockUser = {
   phone: "555-0100",
   address: "1 Main St",
   avatarUrl: "",
+  role: "user",
 };
 
 describe("userSlice", () => {

@@ -1,70 +1,74 @@
 import React, { useState } from "react";
-import { register, sendPasswordReset } from "../../firebase/auth";
+import { register } from "../../firebase/auth";
 import { createUserDoc } from "../../firebase/firestore";
-import { Form, Button, Alert, Card, InputGroup } from "react-bootstrap";
+import { Form, Button, Alert, Card, InputGroup, ProgressBar } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
 const accent = "#6366f1";
 
+// Map Firebase error codes to safe generic messages
+const friendlyError = (err: unknown): string => {
+  const code = (err as { code?: string }).code ?? "";
+  const map: Record<string, string> = {
+    "auth/email-already-in-use":   "An account with this email already exists.",
+    "auth/invalid-email":          "Please enter a valid email address.",
+    "auth/weak-password":          "Password must be at least 8 characters.",
+    "auth/too-many-requests":      "Too many attempts. Please try again later.",
+    "auth/network-request-failed": "Network error. Please check your connection.",
+  };
+  return map[code] ?? "Registration failed. Please try again.";
+};
+
+// Password strength: 0 (too short) | 1 (weak) | 2 (good) | 3 (strong)
+const getStrength = (pw: string) => {
+  if (pw.length === 0) return { score: 0, label: "", variant: "danger" };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw) || /[^A-Za-z0-9]/.test(pw)) score++;
+  const labels = ["Too short", "Weak", "Good", "Strong"];
+  const variants = ["danger", "warning", "info", "success"];
+  return { score, label: labels[score], variant: variants[score] };
+};
+
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [resetEmail, setResetEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [resetMsg, setResetMsg] = useState<string>("");
-  const [showReset, setShowReset] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [resetLoading, setResetLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Autofill only after focus
-  const handleEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.setAttribute("autocomplete", "username");
-  };
-  const handlePasswordFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.setAttribute("autocomplete", "new-password");
-  };
-  const handleResetEmailFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.setAttribute("autocomplete", "username");
-  };
+  const strength = getStrength(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    setLoading(true);
     try {
       const userCredential = await register(email, password);
-      await createUserDoc(userCredential.user.uid, { email });
-      setError("");
+      // Create Firestore user doc — all new accounts default to role "user"
+      // To grant admin access, set role: "admin" in Firebase Console for that user
+      await createUserDoc(userCredential.user.uid, {
+        email,
+        displayName: "",
+        phone: "",
+        address: "",
+        avatarUrl: "",
+        role: "user",
+      });
       navigate("/login");
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Registration failed.");
-      }
+      setError(friendlyError(err));
     }
     setLoading(false);
-  };
-
-  const handleReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setResetMsg("");
-    setError("");
-    setResetLoading(true);
-    try {
-      await sendPasswordReset(resetEmail || email);
-      setResetMsg("Password reset email sent! Check your inbox.");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Password reset failed.");
-      }
-    }
-    setResetLoading(false);
   };
 
   return (
@@ -88,166 +92,80 @@ const Register: React.FC = () => {
         <Card.Body>
           <motion.h2
             className="mb-4 fw-bold text-center"
-            style={{
-              color: accent,
-              letterSpacing: "-1px",
-              textShadow: "0 2px 8px #6366f122",
-            }}
+            style={{ color: accent, letterSpacing: "-1px", textShadow: "0 2px 8px #6366f122" }}
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
             Register for Spree
           </motion.h2>
-          <AnimatePresence>
-            {!showReset ? (
-              <motion.div
-                key="register"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Form onSubmit={handleSubmit} autoComplete="off">
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      required
-                      autoComplete="off"
-                      placeholder="you@email.com"
-                      style={{ borderRadius: "1em" }}
-                      autoFocus={false}
-                      onFocus={handleEmailFocus}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      required
-                      autoComplete="off"
-                      placeholder="Create a password"
-                      style={{ borderRadius: "1em" }}
-                      autoFocus={false}
-                      onFocus={handlePasswordFocus}
-                    />
-                  </Form.Group>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-100 fw-bold rounded-pill"
-                    style={{
-                      background: accent,
-                      border: "none",
-                      letterSpacing: "0.03em",
-                      fontSize: "1.1rem",
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="spinner-border spinner-border-sm me-2" />
-                    ) : (
-                      <span role="img" aria-label="register">📝</span>
-                    )}
-                    Register
-                  </Button>
-                  <div className="text-center mt-3">
-                    <Button
-                      variant="link"
-                      className="p-0 fw-semibold"
-                      style={{ color: accent, textDecoration: "underline" }}
-                      onClick={() => setShowReset(true)}
-                      tabIndex={0}
-                    >
-                      Forgot password?
-                    </Button>
-                  </div>
-                  <div className="text-center mt-2">
-                    <span>Already have an account? </span>
-                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
-                      Login
-                    </Link>
-                  </div>
-                </Form>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="reset"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Form onSubmit={handleReset} autoComplete="off">
-                  <Form.Group className="mb-3">
-                    <Form.Label>Enter your email to reset password</Form.Label>
-                    <InputGroup>
-                      <Form.Control
-                        type="email"
-                        value={resetEmail || email}
-                        onChange={e => setResetEmail(e.target.value)}
-                        required
-                        placeholder="you@email.com"
-                        style={{ borderRadius: "1em" }}
-                        autoFocus={false}
-                        autoComplete="off"
-                        onFocus={handleResetEmailFocus}
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                  <Button
-                    type="submit"
-                    variant="info"
-                    className="w-100 fw-bold rounded-pill"
-                    style={{
-                      background: "#38bdf8",
-                      border: "none",
-                      letterSpacing: "0.03em",
-                      fontSize: "1.1rem",
-                    }}
-                    disabled={resetLoading}
-                  >
-                    {resetLoading ? (
-                      <span className="spinner-border spinner-border-sm me-2" />
-                    ) : (
-                      <span role="img" aria-label="reset">✉️</span>
-                    )}
-                    Send Reset Email
-                  </Button>
-                  <div className="text-center mt-3">
-                    <Button
-                      variant="link"
-                      className="p-0 fw-semibold"
-                      style={{ color: accent, textDecoration: "underline" }}
-                      onClick={() => setShowReset(false)}
-                      tabIndex={0}
-                    >
-                      Back to register
-                    </Button>
-                  </div>
-                  <div className="text-center mt-2">
-                    <span>Already have an account? </span>
-                    <Link to="/login" style={{ color: accent, fontWeight: 600 }}>
-                      Login
-                    </Link>
-                  </div>
-                </Form>
-              </motion.div>
+          <Form onSubmit={handleSubmit} autoComplete="on">
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                placeholder="you@email.com"
+                style={{ borderRadius: "1em" }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Label>Password</Form.Label>
+              <InputGroup>
+                <Form.Control
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  placeholder="Min 8 characters"
+                  style={{ borderRadius: "1em" }}
+                  minLength={8}
+                />
+              </InputGroup>
+            </Form.Group>
+            {/* Password strength bar */}
+            {password.length > 0 && (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-3 mt-1"
+                >
+                  <ProgressBar
+                    now={(strength.score / 3) * 100}
+                    variant={strength.variant}
+                    style={{ height: 6, borderRadius: 4 }}
+                  />
+                  <small className={`text-${strength.variant} fw-semibold`}>
+                    {strength.label}
+                  </small>
+                </motion.div>
+              </AnimatePresence>
             )}
-          </AnimatePresence>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-100 fw-bold rounded-pill mt-2"
+              style={{ background: accent, border: "none", letterSpacing: "0.03em", fontSize: "1.1rem" }}
+              disabled={loading}
+            >
+              {loading
+                ? <span className="spinner-border spinner-border-sm me-2" />
+                : <span role="img" aria-label="register">📝</span>}
+              {" "}Register
+            </Button>
+            <div className="text-center mt-3">
+              <span>Already have an account? </span>
+              <Link to="/login" style={{ color: accent, fontWeight: 600 }}>Login</Link>
+            </div>
+          </Form>
           {error && (
             <Alert variant="danger" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
               {error}
-            </Alert>
-          )}
-          {resetMsg && (
-            <Alert variant="success" className="mt-3 text-center" style={{ borderRadius: "1em" }}>
-              {resetMsg}
             </Alert>
           )}
         </Card.Body>

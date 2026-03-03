@@ -36,6 +36,7 @@ test("renders Profile with user info", async () => {
           phone: "1234567890",
           address: "123 Main St",
           avatarUrl: "",
+          role: "user",
         },
         isAuthenticated: true,
         status: "succeeded",

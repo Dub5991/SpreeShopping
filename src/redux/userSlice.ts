@@ -8,6 +8,7 @@ type UserType = {
   phone: string;
   address: string;
   avatarUrl: string;
+  role: string;
 } | null;
 
 interface UserState {

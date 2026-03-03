@@ -13,17 +13,15 @@ import OrderDetail from "./components/Orders/OrderDetail";
 import ProductDetail from "./components/Products/ProductDetail";
 import CartPage from "./pages/Cart";
 import Logout from "./components/Auth/Logout";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import AnimatedBackground from "./components/AnimatedBackground";
 import SpreeLogo from "./components/SpreeLogo";
 
 const App: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
-
-  // Toast state for cart add notification
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState<string | null>(null);
 
-  // Listen for cart:added events from anywhere in the app
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -34,12 +32,10 @@ const App: React.FC = () => {
     return () => window.removeEventListener("cart:added", handler as EventListener);
   }, []);
 
-  // Collapse navbar after clicking a nav link
   const handleNavClick = () => setExpanded(false);
 
   return (
     <Router>
-      {/* Skip-to-content link for keyboard/screen reader accessibility */}
       <a
         href="#main-content"
         className="visually-hidden-focusable position-absolute top-0 start-0 p-2 bg-white text-primary fw-bold"
@@ -47,7 +43,6 @@ const App: React.FC = () => {
       >
         Skip to main content
       </a>
-      {/* Toast always fixed at top of viewport */}
       <ToastContainer
         position="top-center"
         className="p-3"
@@ -91,9 +86,7 @@ const App: React.FC = () => {
           </Toast>
         )}
       </ToastContainer>
-      {/* Animated background for the whole app */}
       <AnimatedBackground />
-      {/* Main navigation bar */}
       <Navbar
         bg="dark"
         variant="dark"
@@ -103,13 +96,7 @@ const App: React.FC = () => {
         style={{ position: "relative", zIndex: 2 }}
       >
         <Container>
-          {/* Brand section with animated Spree logo and text */}
-          <Navbar.Brand
-            as={Link}
-            to="/"
-            onClick={handleNavClick}
-            className="d-flex align-items-center gap-2"
-          >
+          <Navbar.Brand as={Link} to="/" onClick={handleNavClick} className="d-flex align-items-center gap-2">
             <SpreeLogo size={40} className="d-inline-block align-top" />
             <span className="fw-bold ms-2" style={{ fontSize: 22, letterSpacing: 1 }}>
               Spree Store
@@ -117,111 +104,51 @@ const App: React.FC = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="main-navbar" />
           <Navbar.Collapse id="main-navbar">
-            {/* Left navigation links */}
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/products" onClick={handleNavClick}>
-                Products
-              </Nav.Link>
-              <Nav.Link as={Link} to="/orders" onClick={handleNavClick}>
-                Orders
-              </Nav.Link>
-              <Nav.Link as={Link} to="/cart" onClick={handleNavClick}>
-                Cart
-              </Nav.Link>
-              <Nav.Link as={Link} to="/profile" onClick={handleNavClick}>
-                Profile
-              </Nav.Link>
+              <Nav.Link as={Link} to="/products" onClick={handleNavClick}>Products</Nav.Link>
+              <Nav.Link as={Link} to="/orders" onClick={handleNavClick}>Orders</Nav.Link>
+              <Nav.Link as={Link} to="/cart" onClick={handleNavClick}>Cart</Nav.Link>
+              <Nav.Link as={Link} to="/profile" onClick={handleNavClick}>Profile</Nav.Link>
             </Nav>
-            {/* Right navigation links */}
             <Nav>
-              <Nav.Link as={Link} to="/login" onClick={handleNavClick}>
-                Login
-              </Nav.Link>
-              <Nav.Link as={Link} to="/register" onClick={handleNavClick}>
-                Register
-              </Nav.Link>
+              <Nav.Link as={Link} to="/login" onClick={handleNavClick}>Login</Nav.Link>
+              <Nav.Link as={Link} to="/register" onClick={handleNavClick}>Register</Nav.Link>
               <Logout />
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* Main content area with animated route transitions */}
       <Container id="main-content" as="main" className="mt-4" style={{ position: "relative", zIndex: 2 }}>
         <AnimatePresence mode="wait">
           <Routes>
-            {/* Each route is wrapped in a motion.div for fade transitions */}
-            <Route
-              path="/"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <HomePage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <LoginPage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <RegisterPage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <ProfilePage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/products"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <ProductsPage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/products/:productId"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <ProductDetail />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <OrdersPage />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/orders/:orderId"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <OrderDetail />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/cart"
-              element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <CartPage />
-                </motion.div>
-              }
-            />
+            {/* Public routes */}
+            <Route path="/" element={<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><HomePage /></motion.div>} />
+            <Route path="/login" element={<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><LoginPage /></motion.div>} />
+            <Route path="/register" element={<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><RegisterPage /></motion.div>} />
+            <Route path="/products" element={<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><ProductsPage /></motion.div>} />
+            <Route path="/products/:productId" element={<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><ProductDetail /></motion.div>} />
+
+            {/* Protected routes — redirect to /login if not authenticated */}
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><ProfilePage /></motion.div>
+              </ProtectedRoute>
+            } />
+            <Route path="/orders" element={
+              <ProtectedRoute>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><OrdersPage /></motion.div>
+              </ProtectedRoute>
+            } />
+            <Route path="/orders/:orderId" element={
+              <ProtectedRoute>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><OrderDetail /></motion.div>
+              </ProtectedRoute>
+            } />
+            <Route path="/cart" element={
+              <ProtectedRoute>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><CartPage /></motion.div>
+              </ProtectedRoute>
+            } />
           </Routes>
         </AnimatePresence>
       </Container>

@@ -2,8 +2,19 @@
 
 import React, { useEffect, useState } from "react";
 import { getProducts, addProduct, updateProduct, deleteProduct } from "../../firebase/firestore";
-import { Card, Button, Row, Col, Spinner, Modal, Form, InputGroup, Badge } from "react-bootstrap";
+import { Alert, Card, Button, Row, Col, Spinner, Modal, Form, InputGroup, Badge } from "react-bootstrap";
 import { motion } from "framer-motion";
+
+// Only allow http/https URLs — reject javascript: data: and other dangerous protocols
+const isValidHttpUrl = (url: string): boolean => {
+  if (!url) return true; // empty is ok (optional field)
+  try {
+    const { protocol } = new URL(url);
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 
 // Template for a new/empty product
 const emptyProduct = {
@@ -45,6 +56,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState<ProductForm>(emptyProduct);
+  const [imageUrlError, setImageUrlError] = useState<string | null>(null);
 
   // Fetch products from Firestore and update state
   const fetchProducts = async () => {
@@ -63,6 +75,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
   const openModal = (product?: Product) => {
     setEditing(product || null);
     setForm(product ? productToForm(product) : emptyProduct);
+    setImageUrlError(null);
     setShowModal(true);
   };
 
@@ -71,16 +84,35 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Validate image URL on change
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    if (val && !isValidHttpUrl(val)) {
+      setImageUrlError("Image URL must start with http:// or https://");
+    } else {
+      setImageUrlError(null);
+    }
+    handleChange(e);
+  };
+
   // Save new or edited product to Firestore
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (imageUrlError) return;
+
+    const price = Math.round(parseFloat(form.price) * 100) / 100; // enforce 2dp
+    const stock = Math.floor(parseInt(form.stock)); // enforce integer
+
+    if (isNaN(price) || price < 0.01 || price > 99999) return;
+    if (isNaN(stock) || stock < 0 || stock > 99999) return;
+
     const productData = {
-      name: form.name,
-      description: form.description,
-      price: parseFloat(form.price),
-      stock: parseInt(form.stock),
-      imageUrl: form.imageUrl,
-      category: form.category
+      name: form.name.trim(),
+      description: form.description.trim(),
+      price,
+      stock,
+      imageUrl: form.imageUrl.trim(),
+      category: form.category.trim()
     };
     if (editing) {
       await updateProduct(editing.id, productData);
@@ -321,26 +353,38 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
               {/* Product form fields */}
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
-                <Form.Control name="name" value={form.name} onChange={handleChange} required />
+                <Form.Control name="name" value={form.name} onChange={handleChange} required maxLength={100} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" name="description" value={form.description} onChange={handleChange} required />
+                <Form.Control as="textarea" name="description" value={form.description} onChange={handleChange} required maxLength={500} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Price</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>$</InputGroup.Text>
-                  <Form.Control name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleChange} required />
+                  <Form.Control name="price" type="number" min="0.01" max="99999" step="0.01" value={form.price} onChange={handleChange} required />
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Stock</Form.Label>
-                <Form.Control name="stock" type="number" min="0" value={form.stock} onChange={handleChange} required />
+                <Form.Control name="stock" type="number" min="0" max="99999" step="1" value={form.stock} onChange={handleChange} required />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Image URL</Form.Label>
-                <Form.Control name="imageUrl" value={form.imageUrl} onChange={handleChange} />
+                <Form.Control
+                  name="imageUrl"
+                  value={form.imageUrl}
+                  onChange={handleImageUrlChange}
+                  maxLength={500}
+                  placeholder="https://example.com/image.jpg"
+                  isInvalid={!!imageUrlError}
+                />
+                {imageUrlError && (
+                  <Alert variant="danger" className="mt-1 py-1 px-2" style={{ fontSize: "0.9rem", borderRadius: "0.75em" }}>
+                    {imageUrlError}
+                  </Alert>
+                )}
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Category</Form.Label>
@@ -349,13 +393,14 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
                   value={form.category}
                   onChange={handleChange}
                   required
+                  maxLength={50}
                   placeholder="e.g. Clothing, Electronics, Accessories"
                 />
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button type="submit" variant="primary">{editing ? "Update" : "Add"}</Button>
+              <Button type="submit" variant="primary" disabled={!!imageUrlError}>{editing ? "Update" : "Add"}</Button>
             </Modal.Footer>
           </Form>
         </Modal>

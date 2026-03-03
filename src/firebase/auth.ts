@@ -25,3 +25,6 @@ export const logout = (): Promise<void> => {
 export const sendPasswordReset = (email: string) => {
   return sendPasswordResetEmail(auth, email);
 };
+
+// Delete the currently signed-in Firebase Auth user account
+export const deleteCurrentUser = () => auth.currentUser?.delete();

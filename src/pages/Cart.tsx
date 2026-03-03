@@ -102,23 +102,40 @@ const CartPage: React.FC = () => {
       return;
     }
     setCheckoutLoading(true);
-    // Check stock before placing order
+
+    // Re-fetch live product data from Firestore — never trust client-side prices
     const productsSnap = await getProducts();
     const products: Product[] = productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Product));
+
+    // Validate stock
     for (const item of cart) {
       const prod = products.find((p: Product) => p.id === item.id);
       if (!prod || prod.stock < item.quantity) {
-        setCheckoutError(`Not enough stock for ${item.name}`);
+        setCheckoutError(`Not enough stock for "${item.name}". Please update your cart.`);
         setCheckoutLoading(false);
         return;
       }
     }
-    // Place order
+
+    // Always use server-side prices — reject any client-manipulated values
+    const verifiedItems = cart.map((item) => {
+      const prod = products.find((p: Product) => p.id === item.id);
+      return {
+        productId: item.id,
+        name: item.name,
+        price: prod?.price ?? item.price, // use Firestore price, not localStorage price
+        quantity: item.quantity,
+      };
+    });
+    const serverTotal = verifiedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    // Place order with verified prices
     await addOrder({
       userId: user.uid,
-      items: cart.map(({ id, name, price, quantity }) => ({ productId: id, name, price, quantity })),
-      total
+      items: verifiedItems,
+      total: serverTotal,
     });
+
     // Update stock
     for (const item of cart) {
       const prod = products.find((p: Product) => p.id === item.id);
@@ -126,6 +143,7 @@ const CartPage: React.FC = () => {
         await updateProduct(item.id, { stock: prod.stock - item.quantity });
       }
     }
+
     setCart([]);
     setCartState([]);
     setToastMsg("Order placed! Thank you for shopping with Spree 🎉");

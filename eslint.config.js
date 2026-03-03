@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'node_modules'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -23,6 +23,20 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+
+      // --- Security rules ---
+      // Prevent code injection via eval
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      // Prevent javascript: URL injection
+      'no-script-url': 'error',
+      // Prevent prototype pollution
+      'no-extend-native': 'error',
+      // Warn on console.log in production code (use console.warn/error for real issues)
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // Discourage unsafe any types that can hide injection vectors
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
 )
