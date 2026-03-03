@@ -134,6 +134,8 @@ const Login: React.FC = () => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
+                      id="login-email"
+                      name="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
@@ -146,6 +148,8 @@ const Login: React.FC = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
+                      id="login-password"
+                      name="password"
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       required
@@ -196,6 +200,8 @@ const Login: React.FC = () => {
                     <InputGroup>
                       <Form.Control
                         type="email"
+                        id="reset-email"
+                        name="resetEmail"
                         value={resetEmail || email}
                         onChange={e => setResetEmail(e.target.value)}
                         required

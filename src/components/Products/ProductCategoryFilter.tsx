@@ -39,6 +39,8 @@ const ProductCategoryFilter: React.FC<{
       </span>
       {/* Dropdown select for categories */}
       <Form.Select
+        id="category-select"
+        name="category"
         value={selected ?? ""}
         onChange={e => onCategoryChange(e.target.value === "" ? null : e.target.value)}
         style={{ maxWidth: 300, minWidth: 160 }}

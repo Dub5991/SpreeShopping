@@ -107,6 +107,8 @@ const Register: React.FC = () => {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
+                id="register-email"
+                name="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
@@ -120,6 +122,8 @@ const Register: React.FC = () => {
               <InputGroup>
                 <Form.Control
                   type="password"
+                  id="register-password"
+                  name="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
