@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Profile from "../components/User/Profile";
 import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../redux/userSlice";
 
@@ -46,9 +47,11 @@ test("renders Profile with user info", async () => {
   });
 
   render(
-    <Provider store={mockStore}>
-      <Profile />
-    </Provider>
+    <MemoryRouter>
+      <Provider store={mockStore}>
+        <Profile />
+      </Provider>
+    </MemoryRouter>
   );
 
   await flushPromises();
