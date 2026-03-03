@@ -4,11 +4,10 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: './tsconfig.jest.json',
-      diagnostics: {
-        // TS1343: import.meta only allowed with ESM module targets (Vite-specific).
-        // firebaseConfig is mocked globally via moduleNameMapper so it never executes.
-        ignoreCodes: [1343],
-      },
+      // Disable TS type-checking in Jest — we rely on `tsc -b` for that.
+      // Also prevents TS1343 (import.meta) errors if the coverage provider
+      // instruments firebaseConfig.ts before the moduleNameMapper stub takes effect.
+      diagnostics: false,
     }],
     '^.+\\.(js|jsx)$': 'babel-jest',
   },
@@ -21,6 +20,9 @@ module.exports = {
     '^.+/firebase/firebaseConfig$': '<rootDir>/src/firebase/__mocks__/firebaseConfig.ts',
     '^\\.\/firebaseConfig$': '<rootDir>/src/firebase/__mocks__/firebaseConfig.ts',
   },
+  // Belt-and-suspenders: exclude firebaseConfig from coverage via both mechanisms.
+  // collectCoverageFrom negation patterns exclude it from the file list;
+  // coveragePathIgnorePatterns catches it if the coverage provider resolves absolute paths.
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
@@ -29,6 +31,12 @@ module.exports = {
     '!src/firebase/__mocks__/**',
     '!src/firebase/firebaseConfig.ts',
     '!src/firebase/seedProducts.ts',
+  ],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    'src/firebase/firebaseConfig\\.ts$',
+    'src/firebase/seedProducts\\.ts$',
+    'src/firebase/__mocks__/',
   ],
   coverageReporters: ['text', 'lcov'],
 };

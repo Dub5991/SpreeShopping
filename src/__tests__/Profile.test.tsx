@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Profile from "../components/User/Profile";
 import { Provider } from "react-redux";
@@ -6,12 +6,11 @@ import { MemoryRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../redux/userSlice";
 
-// Helper to flush pending promises (Jest/JSDOM safe)
-const flushPromises = () => new Promise(res => setTimeout(res, 0));
-
-// Mock getUserDoc as before
+// Return a Promise so React 19 can properly schedule the resulting state updates
+// inside act(). A synchronous return causes "not wrapped in act()" warnings
+// because the state updates fire in a microtask outside the initial render.
 jest.mock("../firebase/firestore", () => ({
-  getUserDoc: () => ({
+  getUserDoc: () => Promise.resolve({
     exists: () => true,
     data: () => ({
       email: "test@example.com",
@@ -46,15 +45,18 @@ test("renders Profile with user info", async () => {
     },
   });
 
-  render(
-    <MemoryRouter>
-      <Provider store={mockStore}>
-        <Profile />
-      </Provider>
-    </MemoryRouter>
-  );
-
-  await flushPromises();
+  // Wrapping render in act(async) tells React to process all pending promises
+  // and resulting state updates (setProfile, setForm, setAvatarUrl, setLoading)
+  // before the assertion, eliminating "not wrapped in act()" warnings.
+  await act(async () => {
+    render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <Profile />
+        </Provider>
+      </MemoryRouter>
+    );
+  });
 
   await waitFor(() =>
     expect(screen.getByText(/test@example.com/i)).toBeInTheDocument()
