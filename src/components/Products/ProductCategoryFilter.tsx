@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { getProducts } from "../../firebase/firestore";
 import { Form } from "react-bootstrap";
