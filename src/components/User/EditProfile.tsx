@@ -84,8 +84,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
     >
       <Form onSubmit={handleSubmit} style={{ color: "#1e293b", fontSize: "1.13rem" }}>
         <Form.Group className="mb-3">
-          <Form.Label>Name</Form.Label>
+          <Form.Label htmlFor="profile-displayName">Name</Form.Label>
           <Form.Control
+            id="profile-displayName"
             name="displayName"
             value={form.displayName || ""}
             onChange={handleChange}
@@ -96,8 +97,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Phone</Form.Label>
+          <Form.Label htmlFor="profile-phone">Phone</Form.Label>
           <Form.Control
+            id="profile-phone"
             name="phone"
             value={form.phone || ""}
             onChange={handleChange}
@@ -107,8 +109,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Address</Form.Label>
+          <Form.Label htmlFor="profile-address">Address</Form.Label>
           <Form.Control
+            id="profile-address"
             name="address"
             value={form.address || ""}
             onChange={handleChange}
@@ -118,8 +121,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Avatar URL</Form.Label>
+          <Form.Label htmlFor="profile-avatarUrl">Avatar URL</Form.Label>
           <Form.Control
+            id="profile-avatarUrl"
             name="avatarUrl"
             value={form.avatarUrl || ""}
             onChange={handleAvatarUrlChange}

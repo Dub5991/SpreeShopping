@@ -352,27 +352,28 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
             <Modal.Body>
               {/* Product form fields */}
               <Form.Group className="mb-3">
-                <Form.Label>Name</Form.Label>
-                <Form.Control name="name" value={form.name} onChange={handleChange} required maxLength={100} />
+                <Form.Label htmlFor="product-name">Name</Form.Label>
+                <Form.Control id="product-name" name="name" value={form.name} onChange={handleChange} required maxLength={100} />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" name="description" value={form.description} onChange={handleChange} required maxLength={500} />
+                <Form.Label htmlFor="product-description">Description</Form.Label>
+                <Form.Control as="textarea" id="product-description" name="description" value={form.description} onChange={handleChange} required maxLength={500} />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Price</Form.Label>
+                <Form.Label htmlFor="product-price">Price</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>$</InputGroup.Text>
-                  <Form.Control name="price" type="number" min="0.01" max="99999" step="0.01" value={form.price} onChange={handleChange} required />
+                  <Form.Control id="product-price" name="price" type="number" min="0.01" max="99999" step="0.01" value={form.price} onChange={handleChange} required />
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Stock</Form.Label>
-                <Form.Control name="stock" type="number" min="0" max="99999" step="1" value={form.stock} onChange={handleChange} required />
+                <Form.Label htmlFor="product-stock">Stock</Form.Label>
+                <Form.Control id="product-stock" name="stock" type="number" min="0" max="99999" step="1" value={form.stock} onChange={handleChange} required />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Image URL</Form.Label>
+                <Form.Label htmlFor="product-image-url">Image URL</Form.Label>
                 <Form.Control
+                  id="product-image-url"
                   name="imageUrl"
                   value={form.imageUrl}
                   onChange={handleImageUrlChange}
@@ -387,8 +388,9 @@ const ProductManager: React.FC<ProductManagerProps> = ({ adminMode, category = n
                 )}
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
+                <Form.Label htmlFor="product-category">Category</Form.Label>
                 <Form.Control
+                  id="product-category"
                   name="category"
                   value={form.category}
                   onChange={handleChange}
