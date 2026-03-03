@@ -27,6 +27,8 @@ module.exports = {
     '!src/main.tsx',
     '!src/vite-env.d.ts',
     '!src/firebase/__mocks__/**',
+    '!src/firebase/firebaseConfig.ts',
+    '!src/firebase/seedProducts.ts',
   ],
   coverageReporters: ['text', 'lcov'],
 };
